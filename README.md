@@ -8,7 +8,7 @@ to infer a lag distance between the tailgate and the rest of the AFC pan line. T
 these tailgate distance measurements be used (by others), to report by exception when the tailgate distance to the remaining AFC pan line threshold is breached.
 
 
-# Problem Statement
+## Problem Statement
 
 1. Track a part of the tailgate in each image.
 2. Find the distance from conveyor to the tailgate.
