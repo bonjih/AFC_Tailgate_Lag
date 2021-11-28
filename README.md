@@ -10,5 +10,10 @@ these tailgate distance measurements be used (by others), to report by exception
 
 # Problem Statement
 
-1. Track a part of the tailgate
-2. Find the distance from convayer to the tailgate
+1. Track a part of the tailgate in each image.
+2. Find the distance from conveyor to the tailgate.
+
+## Assumptions
+
+1. The conveyor is always parallel to the coal face
+2. The camera takes the image at 0 degs, i.e., looking straight up the cut
