@@ -6,12 +6,15 @@ __version__ = "1.0.0"
 __maintainer__ = "Anglo American - email: "
 __status__ = "Dev"
 
+
 import image_detect
 import db_manager
 import cv_image_processing
 import time
 import json
-import pymysql as pymysql  # just to catch db errors
+import pymysql as pymysql  # to catch db errors
+from sqlalchemy import exc  # to catch db insert errors
+import sqlalchemy  # to catch db insert errors
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
@@ -56,9 +59,10 @@ def format_image_data(img_data):
     image_data = list(img_meta_data) + cv_data
 
     # values sent to the db_manager and then the db
+
     # image_data[0]  - date/time image added to dir
-    # image_data[15] - distance in mm from bottom of image (camera) to top of tailgate (reference obj)
-    # image_data[20] - pix_dist_refLine_to_gate
+    # image_data[15] - distance in mm from bottom of image (camera) to tailgate (reference obj xA,xB)
+    # image_data[20] - cam_dist_to_gate in pixels
     # image_data[35] - tailgate_coord_x in image
     # image_data[36] - tailgate_coord_y in image
     # image_data[16]  - tailgate distance leading the pan
@@ -75,24 +79,23 @@ def format_image_data(img_data):
     return image_data2, img_meta_data
 
 
-def db_manager_controller():
+def db_manager_controller(dbfields):
     dir_img_name = image_detect.img_meta_data(jconfigs)
     db_manager.db_creds_json(jconfigs)
     db_manager.db_connect()
-    db_fields = db_json_parser()
 
     exists = db_manager.check_entry_exist(dir_img_name)
 
     image_data2, img_meta_data = format_image_data(jconfigs)
 
     if not exists:
-        db_manager.image_data(image_data2, db_fields)  # for a single db insert
+        db_manager.image_data(image_data2, dbfields)  # for a single db insert
     else:
         print("latest image, '{}', already in the database, skipping....".format(img_meta_data[1]))
 
 
 if __name__ == "__main__":
-    # loop forever, wait for a new image
+    # loop forever, waits for a new image
 
     while True:
         print('Checking for latest image.....')
@@ -100,7 +103,8 @@ if __name__ == "__main__":
             jconfigs = config_json_parser()
             image_detect_controller()
             cv_image_processing.load_image(jconfigs)
-            db_manager_controller()
+            db_fields = db_json_parser()
+            db_manager_controller(db_fields)
 
         except FileNotFoundError as e:
             print("Can not reach 'jconfig.json' or path to image, please check path to image or config.json: {}".format(
@@ -123,4 +127,8 @@ if __name__ == "__main__":
             print('\n! Received interrupt, quitting threads, restart main.py, check path to image in config.json.\n')
         except ConnectionResetError as e:
             print("Database connection restarted. Error: {}".format(e))
+        except sqlalchemy.exc.OperationalError as e:
+            print("There is a mismatch between table names in db_fields.json and the database.")
+
+
 
