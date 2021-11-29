@@ -23,6 +23,9 @@ def load_image(configs):
     latest_file = max(list_of_files, key=os.path.getctime)
     file_name = latest_file[2:]
     img = cv.imread(file_name)
+    # resize image to 1280x720 - images in GluPhotos are 1920x1080
+    # data sheets for camera says images are HD 720p video, resolution 1280x720
+    #img = imutils.resize(img, width=1280)
     return img
 
 
@@ -34,11 +37,10 @@ def save_image(processed_file, img):
 
 def create_mask(img):
     img = load_image(img)
-    frame = img.copy()
-    pts = np.array([[960, 180], [960, 880], [1200, 880], [1200, 180]], np.int32)
-    (x, y, w, h) = cv.boundingRect(pts)
+    pts_1080 = np.array([[960, 180], [960, 880], [1200, 880], [1200, 180]], np.int32)
+    #pts_720 = np.array([[640, 60], [640, 720], [800, 720], [800, 60]], np.int32)
     mask = np.zeros(img.shape, np.uint8)
-    cv.drawContours(mask, [pts], -1, (255, 255, 255), -1, cv.LINE_AA)
+    cv.drawContours(mask, [pts_1080], -1, (255, 255, 255), -1, cv.LINE_AA)
     result = cv.bitwise_and(img, mask)
     return result
 
@@ -53,6 +55,38 @@ def color_thresh_HSV(img):
     return result
 
 
+def find_area(orig, x_centre,  midpoint, xB, yB, color, refObj):
+    # find base
+    cv.line(orig, (x_centre, x_centre), (x_centre, 0), (0, 255, 255), 1)
+    base = (dist.euclidean((x_centre, x_centre), (x_centre, 0)))
+
+    # find side a
+    cv.line(orig, (x_centre, x_centre), (int(xB), int(yB)), color, 2)
+    side_a = (dist.euclidean((x_centre, x_centre), (xB, yB)))
+    side_a_dist = (dist.euclidean((x_centre, x_centre), (xB, yB)) / refObj[2]) / 25.4
+    (mX2, mY2) = midpoint((x_centre, x_centre), (xB, yB))
+    cv.putText(orig, "{:.1f}mm".format(side_a_dist), (int(mX2), int(mY2 - 10)),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
+    # find side b
+    cv.line(orig, (x_centre, 0), (int(xB), int(yB)), color, 2)
+    side_b = (dist.euclidean((x_centre, 0), (xB, yB)))
+
+    # find area of triangle
+    s = (side_b + side_a + base) / 2
+    area_of_triangle = (s * (s - side_b) * (s - side_a) * (s - base)) ** 0.5
+    height_of_triangle = (area_of_triangle * 2) / base
+
+    KNOWN_DISTANCE = known_distance
+    KNOWN_WIDTH = known_width
+    #RBB = cv.minAreaRect(c)
+
+    focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
+    fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
+
+    return side_a_dist, fl_to_dist, height_of_triangle
+
+
 def cv_processing(img):
     img = create_mask(img)
     img = color_thresh_HSV(img)
@@ -62,6 +96,7 @@ def cv_processing(img):
 
     img_shape_x = img.shape[1]
     img_shape_y = img.shape[0]
+
     x_centre = round(img_shape_x / 2)
     y_centre = round(img_shape_y / 2)
 
@@ -94,7 +129,7 @@ def cv_processing(img):
 
     for c in cnts:
         # ignore small contours
-        if cv.contourArea(c) < 140:
+        if cv.contourArea(c) < 10:
             continue
 
         # compute the rotated bounding box of the contour
@@ -132,11 +167,11 @@ def cv_processing(img):
 
             # compute the Euclidean distance between the coordinates,
             # and then convert the distance in pixels to distance in units
-            d = (dist.euclidean((xA, yA), (xB, yB)) / refObj[2]) / 25.4
+            # d = (dist.euclidean((xA, yA), (xB, yB)) / refObj[2]) / 25.4
             # (mX, mY) = midpoint((xA, yA), (xB, yB))
             # cv.putText(orig, "{:.1f}mm".format(d), (int(mX), int(mY - 10)),
             #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-
+            #
             # str_coords = (str(xB) + " / " + str( yB))
             # cv.putText(orig, str(str_coords), (int(xB), int(yB)), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
 
@@ -144,38 +179,11 @@ def cv_processing(img):
             # get height of triangle to base (x_centre)
             # and then convert the distance in pixels to distance in units
 
-            a = int(xA)-x_centre
+            a = int(xB)-x_centre
+            print(a, xB, yB, 'ee')
 
-            print(a, xA, yA)
+            (side_a_dist, fl_to_dist, height_of_triangle) = find_area(orig, x_centre, midpoint, xB, yB, color, refObj)
 
-            # find base
-            cv.line(orig, (x_centre, x_centre), (x_centre, 0), (0, 255, 255), 1)
-            base = (dist.euclidean((x_centre, x_centre), (x_centre, 0)))
-
-            # find side a
-            cv.line(orig, (x_centre, x_centre), (int(xB), int(yB)), color, 2)
-            side_a = (dist.euclidean((x_centre, x_centre), (xB, yB)))
-            side_a_dist = (dist.euclidean((x_centre, x_centre), (xB, yB)) / refObj[2]) / 25.4
-            (mX2, mY2) = midpoint((x_centre, x_centre), (xB, yB))
-            cv.putText(orig, "{:.1f}mm".format(side_a_dist), (int(mX2), int(mY2 - 10)),
-                       cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-
-            # find side b
-            cv.line(orig, (x_centre, 0), (int(xB), int(yB)), color, 2)
-            side_b = (dist.euclidean((x_centre, 0), (xB, yB)))
-
-            # find area of triangle
-            s = (side_b + side_a + base) / 2
-            area_of_triangle = (s * (s - side_b) * (s - side_a) * (s - base)) ** 0.5
-            height_of_triangle = (area_of_triangle * 2) / base
-
-            KNOWN_DISTANCE = known_distance
-            KNOWN_WIDTH = known_width
-            RBB = cv.minAreaRect(c)
-
-            focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
-            fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
-            print(focal_length)
             cv.imshow("Image", orig)
             cv.waitKey(0)
 
