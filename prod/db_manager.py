@@ -23,19 +23,6 @@ def db_creds_json(j_configs):
     database = j_configs[5]
 
 
-#engine = create_engine('mysql+pymysql://debian-sys-maint:SoLcxvfgbzqU0ixI@10.6.66.160/anglo?charset=utf8')
-
-
-
-
-# strips for tuple for if/than statement in check_entry_exist()
-def remove_extra_char_in_values(res_value):
-    res_value = str(res_value)[1:-1]
-    res_value = res_value.replace("'", "")
-    res_value = res_value.replace(",", "")
-    return res_value
-
-
 try:
     def db_connect():
         global conn, cursor, engine
@@ -45,19 +32,20 @@ try:
 
     # check if file name entry exists in db, if so skip
     def check_entry_exist(img_configs):
-        print(img_configs)
         cursor.execute('SELECT file_name FROM TailgateImageAnalysis WHERE file_name = %s', img_configs[1])
         exits = cursor.fetchone()
-        exits = remove_extra_char_in_values(exits)
+        if exits is None:
+            return False
 
-        if img_configs[1] == exits:
+        if img_configs[1] == exits[0]:
             return True
-        if img_configs[1] != exits:
+        if img_configs[1] != exits[0]:
             return False
 
     # meta_data and cv_data are tuples
     def image_data(img_data, db_fields):
-
+        cursor.execute(
+            "INSERT INTO TailgateImageAnalysis (date_time) VALUES (CURRENT_TIMESTAMP)", )
         df = pd.DataFrame(img_data)
         df = df.transpose()
         df.columns = db_fields
