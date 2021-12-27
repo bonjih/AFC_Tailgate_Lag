@@ -93,7 +93,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 
     focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
     fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
-    print(focal_length, fl_to_dist, 'ff', c)
+    #print(focal_length, fl_to_dist, 'ff', c)
 
     return side_a_dist, fl_to_dist, height_of_triangle, c, g
 

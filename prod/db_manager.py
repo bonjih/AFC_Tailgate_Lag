@@ -10,6 +10,7 @@ import pymysql as pymysql  # db connection module, change to suite db type
 import sqlalchemy
 from sqlalchemy import create_engine
 import pandas as pd
+import VariableClass
 
 
 # import MySQLdb
