@@ -62,11 +62,13 @@ def format_image_data(img_data):
     img_meta_data = image_detect_controller()
     image_data = list(img_meta_data) + cv_data
 
-    image_data2 = VariableClass.ImagesData(image_data[0], image_data[17], image_data[16], image_data[37],
-                                           image_data[38], image_data[16], image_data[15], image_data[2],
-                                           image_data[1], image_data[3], image_data[4], image_data[5])
+    var = (VariableClass.ImageData(image_data[0], image_data[17], image_data[16], image_data[37],
+                                   image_data[38], image_data[16], image_data[15], image_data[2],
+                                   image_data[1], image_data[3], image_data[4], image_data[5]))
 
-    return image_data2, img_meta_data
+    return var.date_time_db, var.cam_dist_to_gate, var.chain_dist_to_gate, var.tailgate_coord_x, var.tailgate_coord_y, \
+           var.distance_lead, var.distance_lag, var.file_size, var.file_name, var.num_pixels, var.date_time_create, \
+           var.image_id
 
 
 def db_manager_controller(dbfields):
@@ -75,12 +77,12 @@ def db_manager_controller(dbfields):
     db_manager.db_connect()
 
     exists = db_manager.check_entry_exist(image_date)
-    image_data2, img_meta_data = format_image_data(jconfigs)
+    image_data = format_image_data(jconfigs)
 
     if not exists:
-        db_manager.image_data(image_data2, dbfields)  # for a single db insert
+        db_manager.image_data(image_data, dbfields)  # for a single db insert
     else:
-        print("latest image, '{}', already in the database, skipping....".format(img_meta_data[1]))
+        print("latest image, '{}', already in the database, skipping....".format(image_data[1]))
 
 
 if __name__ == "__main__":

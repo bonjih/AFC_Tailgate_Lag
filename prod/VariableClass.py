@@ -7,7 +7,7 @@ __maintainer__ = "Anglo American"
 __status__ = "Dev"
 
 
-class ImagesData:
+class ImageData:
     """holds all database variables
       values sent to the db_manager and then the db
 
@@ -25,10 +25,8 @@ class ImagesData:
       image_id[5]  - id of image"""
 
     def __init__(self, date_time_db, cam_dist_to_gate, chain_dist_to_gate, tailgate_coord_x, tailgate_coord_y,
-                 distance_lead,
-                 distance_lag, file_name, file_size, num_pixels, date_time_create, image_id):
+                 distance_lead, distance_lag, file_size, file_name, num_pixels, date_time_create, image_id):
         self.date_time_db, self.cam_dist_to_gate, self.chain_dist_to_gate, self.tailgate_coord_x, self.tailgate_coord_y, \
-        self.distance_lead, self.distance_lag, self.file_name, self.file_size, self.num_pixels, self.date_time_create, \
+        self.distance_lead, self.distance_lag, self.file_size, self.file_name, self.num_pixels, self.date_time_create, \
         self.image_id = date_time_db, cam_dist_to_gate, chain_dist_to_gate, tailgate_coord_x, tailgate_coord_y, \
-                        distance_lead, distance_lag, file_name, file_size, num_pixels, date_time_create, image_id
-        self.post_fix = None
+                        distance_lead, distance_lag, file_size, file_name, num_pixels, date_time_create, image_id
