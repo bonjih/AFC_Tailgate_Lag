@@ -26,20 +26,19 @@ alarm_delay = 5
 # retrieve image metadata
 def img_meta_data(configs):
     global image_path, file_type  # change path/type in config.json
-    image_path = configs[0]
+    image_path = configs[8]
     file_type = configs[1]
 
     # define file location .... may not need in fine solution
     path_to_img = pathlib.Path(image_path)  # change path to image in config.ini
     # assert f_name.exists(), f'No such file: {f_name}'  # check that the file exists
-    # date/time - when the  image is added to the directory
-    epoc_time = os.path.getmtime(path_to_img)
-    time_dir_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(epoc_time))
-    datetime_object = datetime.strptime(time_dir_str, '%Y-%m-%d %H:%M:%S')
-    date_time_dir = (datetime_object.strftime('%Y-%m-%d %H:%M:%S'))
+
+    # date/time - when the  image is added to the database
+    now = datetime.now()
+    date_time_db = now.strftime('%Y-%m-%d %H:%M:%S')
 
     # date/time - when the image was created
-    time_crt_str = (time.ctime(os.path.getctime(path_to_img)))
+    time_crt_str = (time.ctime(os.path.getmtime(path_to_img)))
     datetime_object_create = datetime.strptime(time_crt_str, "%a %b %d %H:%M:%S %Y")
     date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
 
@@ -56,9 +55,9 @@ def img_meta_data(configs):
 
     # no of pixels
     width, height = Image.open(file_name).size
-    no_pixels = width * height
+    num_pixels = width * height
 
-    return date_time_dir, file_name, file_size, no_pixels, date_time_create, image_id
+    return date_time_db, file_name, file_size, num_pixels, date_time_create, image_id
 
 
 def on_created(event):

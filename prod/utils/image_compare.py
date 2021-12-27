@@ -7,59 +7,84 @@ __maintainer__ = "Anglo American - email: "
 __status__ = "Dev"
 
 # Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
-# puts all similar images in AISMORLAG01\\gate_end_lag\scripts\filtered
+# puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
+import time
 
 import cv2 as cv
 import random
 import glob
 import shutil
-from sewar.full_ref import scc
-from skimage import metrics
 import os
 import numpy as np
 
+samples = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples"
+filtered = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered"
 
-def rand_sample():
-    shutil.rmtree("samples")
-    shutil.rmtree("filtered")
-    os.mkdir("samples")
-    os.mkdir("filtered")
+
+def dir_check():
+    os.chdir(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils')
+    samples_exists = os.path.isdir('samples')
+
+    if samples_exists is True:
+        dir = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples'
+        for file in os.scandir(dir):
+            os.remove(file.path)
+
+    if samples_exists is False:
+        os.mkdir("samples")
+
+
+def rand_sample(configs):
+    global file_type
+
+    image_path = configs[0]
+    file_type = configs[1]
+
+    os.chdir(image_path)
+    list_of_files = glob.glob('./*.{}'.format(file_type))
 
     file_names = []
-    for img in glob.glob('GelPhotos/*'):
-        file_names.append(img)
+    for img in list_of_files:
+        file_names.append(img[2:])
 
     len_dir = len(file_names)
-
-    rand_num = random.sample(range(len_dir), 50)
+    len_sample = round(len_dir / 2)
+    rand_num = random.sample(range(len_dir), int(len_sample))
 
     for num in rand_num:
-        shutil.copy(file_names[num], "samples/")
+        shutil.copy(os.path.join(image_path, file_names[num]),
+                    samples)
 
 
 def template_match():
-    template = cv.imread('template.jpg', 0)
+    template = cv.imread(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\template.jpg', 0)
     template = cv.blur(template, (8, 8))
     template = cv.dilate(template, ())
     h, w = template.shape[::]
     threshold = 0.535
 
-    for img in glob.glob('samples/*'):
-        sampleimg = cv.imread(img, 0)
-        sampleimg = cv.blur(sampleimg, (8, 8))
-        res = cv.matchTemplate(sampleimg, template, cv.TM_CCOEFF_NORMED)
-        loc = np.where(res >= threshold)
+    os.chdir(samples)
+    list_of_files = glob.glob('./*.{}'.format(file_type))
+    latest_file = max(list_of_files, key=os.path.getctime)
+    file_name = latest_file[2:]
 
-        x = []
-        for pt in zip(*loc[::-1]):
-            x.append(pt[0])
+    sampling = cv.imread(file_name, 0)
+    sampling = cv.blur(sampling, (8, 8))
+    res = cv.matchTemplate(sampling, template, cv.TM_CCOEFF_NORMED)
+    loc = np.where(res >= threshold)
 
-        if len(x) != 0 and (max(x) - min(x)) < 100:
-            # range = max(x) - min(x)
-            # print(img, range)
-            shutil.move(img, 'filtered/')
+    x = []
+    for pt in zip(*loc[::-1]):
+        x.append(pt[0])
+
+    if len(x) != 0 and (max(x) - min(x)) < 100:
+        # range = max(x) - min(x)
+        # print(img, range)
+        shutil.move(file_name, '{}/'.format(filtered))
 
 
-if __name__ == "__main__":
-    rand_sample()
-    # template_match()
+def main(configs):
+    rand_sample(configs)
+    time.sleep(5)
+    template_match()
+    dir_check()
