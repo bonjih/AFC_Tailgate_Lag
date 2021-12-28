@@ -30,7 +30,6 @@ def config_json_parser():
         data = json.load(jsonFile)
         for key, value in data.items():
             config_values.append(value)
-
     return config_values
 
 
@@ -44,11 +43,11 @@ def db_json_parser():
     return db_field_key
 
 
-def cv_img_processing_controller(jconfigs):
-    cv_image_processing.load_image(jconfigs)
-    cv_data_tup = cv_image_processing.cv_processing(jconfigs)
-    cv_data = cv_data_tup[0] + cv_data_tup[1]  # concatenate cv_data list, pass to db_manager.image_data()
-    img_meta_data = VariableClass.img_meta_data(jconfigs)
+def img_processing_controller(jconfig):
+    cv_image_processing.load_image(jconfig)
+    cv_data_tup = cv_image_processing.cv_processing(jconfig)
+    cv_data = cv_data_tup[0] + cv_data_tup[1]
+    img_meta_data = VariableClass.img_meta_data(jconfig)
     image_data = (list(img_meta_data) + cv_data)
     return image_data
 
@@ -75,10 +74,9 @@ if __name__ == "__main__":
 
         try:
             jconfigs = config_json_parser()
-
             image_compare.main(jconfigs)
             image_detect.watchdog_run(jconfigs)
-            cv_img_data = cv_img_processing_controller(jconfigs)
+            cv_img_data = img_processing_controller(jconfigs)
             db_fields = db_json_parser()
             db_manager_controller(db_fields, cv_img_data)
 

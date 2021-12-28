@@ -1,4 +1,10 @@
-import math
+__author__ = "Ben Hamilton - Titan ICT Consultants"
+__email__ = "ben.hamilton@titanict.com.au"
+__phone__ = "+61 7 3360 4900"
+__license__ = "xxx"
+__version__ = "1.0.0"
+__maintainer__ = "Anglo American"
+__status__ = "Dev"
 
 import cv2 as cv
 import numpy as np
@@ -12,8 +18,8 @@ import os
 # load recent image
 def load_image(configs):
     global latest_file  # file name to global used only for function save_image()
-    global known_distance
-    global known_width
+    global known_distance  # from config.json, known distance to object
+    global known_width  # from config.json, known width of object
 
     known_distance = configs[6]
     known_width = configs[7]
