@@ -13,12 +13,9 @@ import db_manager
 import cv_image_processing
 from prod.utils import image_compare
 import VariableClass
+import ErrorHandlingClass
 
-import time
 import json
-import pymysql as pymysql  # to catch db errors
-from sqlalchemy import exc  # to catch db insert errors
-import sqlalchemy  # to catch db insert errors
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
@@ -55,7 +52,7 @@ def image_detect_controller():
     return img_meta_data
 
 
-# formats all variable to for processing the db
+# formats variable to for processing the db
 def format_image_data(img_data):
     cv_data_tup = cv_image_processing.cv_processing(img_data)
     cv_data = cv_data_tup[0] + cv_data_tup[1]  # concatenate cv_data list, pass to db_manager.image_data()
@@ -82,7 +79,7 @@ def db_manager_controller(dbfields):
     if not exists:
         db_manager.image_data(image_data, dbfields)  # for a single db insert
     else:
-        print("latest image, '{}', already in the database, skipping....".format(image_data[1]))
+        print("latest image, '{}', already in the database, skipping....".format(image_data[8]))
 
 
 if __name__ == "__main__":
@@ -90,6 +87,7 @@ if __name__ == "__main__":
 
     while True:
         print('Checking for latest image.....')
+
         try:
             jconfigs = config_json_parser()
             image_compare.main(jconfigs)
@@ -97,31 +95,5 @@ if __name__ == "__main__":
             cv_image_processing.load_image(jconfigs)
             db_fields = db_json_parser()
             db_manager_controller(db_fields)
-
-        except FileNotFoundError as e:
-            print("Can not reach 'jconfig.json' or path to image, please check path to image or config.json: {}".format(
-                e))
-            time.sleep(alarm_delay)
-        except ValueError as e:
-            print("Error in 'jconfig.json' format or cannot find an image or extension is incorrect or no file in dir "
-                  "'filtered'. Please check config.json and dir 'filtered: {}".format(e))
-            time.sleep(alarm_delay)
-        except AttributeError as e:
-            print('Error: {}'.format(e))
-            time.sleep(alarm_delay)
-        except TypeError as e:
-            print("Error: {}".format(e))
-            time.sleep(alarm_delay)
-        except pymysql.OperationalError as e:
-            print('No connection to database. Please check connection details in config.json: {}'.format(e))
-            time.sleep(alarm_delay)
-        except KeyboardInterrupt:
-            print('\n! Received interrupt, quitting threads, restart main.py, check path to image in config.json.\n')
-        except ConnectionResetError as e:
-            print("Database connection restarted. Error: {}".format(e))
-        except sqlalchemy.exc.OperationalError as e:
-            print("There is a mismatch between table names in db_fields.json and the database.")
-        except PermissionError as e:
-            print("Read/Write: {}".format(e))
-        except shutil.SameFileError as e:
-            print("Some Err: {}".format(e))
+        except Exception as e:
+            ErrorHandlingClass.ErrorMessageHandler(e)
