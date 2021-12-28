@@ -95,5 +95,8 @@ if __name__ == "__main__":
             cv_image_processing.load_image(jconfigs)
             db_fields = db_json_parser()
             db_manager_controller(db_fields)
+
         except Exception as e:
             ErrorHandlingClass.ErrorMessageHandler(e)
+
+

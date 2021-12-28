@@ -18,7 +18,6 @@ class ErrorMessageHandler:
     def __init__(self, error):
         err_type = str(type(error))
         err_type = (err_type[8:-2])
-        print(err_type)
 
         if err_type == 'FileNotFoundError':
             print("Can not reach 'jconfig.json' or path to image, please check path to image or config.json: {}".format(
