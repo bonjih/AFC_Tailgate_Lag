@@ -17,9 +17,9 @@ import os
 
 # load recent image
 def load_image(configs):
-    global latest_file  # file name to global used only for function save_image()
-    global known_distance  # from config.json, known distance to object
-    global known_width  # from config.json, known width of object
+    global latest_file  # file name to global used only for function save_image().
+    global known_distance  # from config.json, known distance to object.
+    global known_width  # from config.json, known width of object.
 
     known_distance = configs[6]
     known_width = configs[7]
