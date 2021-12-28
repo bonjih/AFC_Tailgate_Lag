@@ -18,6 +18,7 @@ from datetime import datetime
 from PIL import Image  # count pixels
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+import VariableClass
 
 alarm_delay = 5
 
