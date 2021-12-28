@@ -7,14 +7,12 @@ __maintainer__ = "Anglo American"
 __status__ = "Dev"
 
 import pymysql as pymysql  # db connection module, change to suite db type
-import sqlalchemy
 from sqlalchemy import create_engine
 import pandas as pd
-import VariableClass
-
 
 # import MySQLdb
 # db = MySQLdb.connect(host=host, user=user, passwd=passwd, db=db)
+
 
 def db_creds_json(j_configs):
     global user, passwd, host, database
@@ -52,17 +50,6 @@ try:
         df.columns = db_fields
         df.to_sql('TailgateImageAnalysis', con=engine, if_exists='append', index=False)
 
-        # create image ID
-        # image ID is created from file name + SQL auto increment id
-        # cursor.execute('SELECT id FROM TailgateImageAnalysis WHERE file_name = %s', file_name)
-        # id_tup = cursor.fetchone()
-        # print(id_tup)
-        # ids = remove_extra_char_in_values(id_tup)
-        # name = file_name[:-4]
-        # image_id = '{}{}'.format(str(name), str(ids))
-        # cursor.execute('UPDATE TailgateImageAnalysis SET image_id = %s WHERE file_name = %s', (image_id, file_name))
-        #
-        # conn.commit()
         print("'{}', with ID '{}' has been added to the database".format(img_data[8], img_data[11]))
 
 
