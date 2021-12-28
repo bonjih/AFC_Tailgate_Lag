@@ -6,6 +6,9 @@ __version__ = "1.0.0"
 __maintainer__ = "Anglo American"
 __status__ = "Dev"
 
+from prod import cv_image_processing
+from prod.main import image_detect_controller
+
 
 class ImageData:
     """holds all database variables
@@ -31,3 +34,14 @@ class ImageData:
         self.distance_lead, self.distance_lag, self.file_size, self.file_name, self.num_pixels, self.date_time_create, \
         self.image_id = date_time_db, cam_dist_to_gate, chain_dist_to_gate, tailgate_coord_x, tailgate_coord_y, \
                         distance_lead, distance_lag, file_size, file_name, num_pixels, date_time_create, image_id
+
+
+# formats variable to for processing the db
+def format_image_data(image_data):
+    var = (ImageData(image_data[0], image_data[17], image_data[16], image_data[37],
+                     image_data[38], image_data[16], image_data[15], image_data[2],
+                     image_data[1], image_data[3], image_data[4], image_data[5]))
+
+    return var.date_time_db, var.cam_dist_to_gate, var.chain_dist_to_gate, var.tailgate_coord_x, var.tailgate_coord_y, \
+           var.distance_lead, var.distance_lag, var.file_size, var.file_name, var.num_pixels, var.date_time_create, \
+           var.image_id

@@ -6,8 +6,6 @@ __version__ = "1.0.0"
 __maintainer__ = "Anglo American - email: "
 __status__ = "Dev"
 
-import shutil
-
 import image_detect
 import db_manager
 import cv_image_processing
@@ -52,29 +50,21 @@ def image_detect_controller():
     return img_meta_data
 
 
-# formats variable to for processing the db
-def format_image_data(img_data):
-    cv_data_tup = cv_image_processing.cv_processing(img_data)
+def cv_img_processing_controller(jconfigs):
+    cv_image_processing.load_image(jconfigs)
+    cv_data_tup = cv_image_processing.cv_processing(jconfigs)
     cv_data = cv_data_tup[0] + cv_data_tup[1]  # concatenate cv_data list, pass to db_manager.image_data()
     img_meta_data = image_detect_controller()
-    image_data = list(img_meta_data) + cv_data
-
-    var = (VariableClass.ImageData(image_data[0], image_data[17], image_data[16], image_data[37],
-                                   image_data[38], image_data[16], image_data[15], image_data[2],
-                                   image_data[1], image_data[3], image_data[4], image_data[5]))
-
-    return var.date_time_db, var.cam_dist_to_gate, var.chain_dist_to_gate, var.tailgate_coord_x, var.tailgate_coord_y, \
-           var.distance_lead, var.distance_lag, var.file_size, var.file_name, var.num_pixels, var.date_time_create, \
-           var.image_id
+    image_data = (list(img_meta_data) + cv_data)
+    return image_data
 
 
 def db_manager_controller(dbfields):
     image_date = image_detect.img_meta_data(jconfigs)
     db_manager.db_creds_json(jconfigs)
     db_manager.db_connect()
-
     exists = db_manager.check_entry_exist(image_date)
-    image_data = format_image_data(jconfigs)
+    image_data = VariableClass.format_image_data(cv_data)
 
     if not exists:
         db_manager.image_data(image_data, dbfields)  # for a single db insert
@@ -92,11 +82,10 @@ if __name__ == "__main__":
             jconfigs = config_json_parser()
             image_compare.main(jconfigs)
             image_detect_controller()
-            cv_image_processing.load_image(jconfigs)
+            cv_data = cv_img_processing_controller(jconfigs)
             db_fields = db_json_parser()
             db_manager_controller(db_fields)
 
         except Exception as e:
+            print(e)
             ErrorHandlingClass.ErrorMessageHandler(e)
-
-
