@@ -30,15 +30,14 @@ try:
         cursor = conn.cursor()
 
     # check if file name entry exists in db, if so skip
-    def check_entry_exist(img_configs):
-        cursor.execute('SELECT file_name FROM TailgateImageAnalysis WHERE file_name = %s', img_configs[1])
+    def check_entry_exist(img_date):
+        cursor.execute('SELECT file_name FROM TailgateImageAnalysis WHERE file_name = %s', img_date)
         exits = cursor.fetchone()
         if exits is None:
             return False
-
-        if img_configs[1] == exits[0]:
+        if img_date == exits[0]:
             return True
-        if img_configs[1] != exits[0]:
+        if img_date != exits[0]:
             return False
 
     # meta_data and cv_data are tuples

@@ -54,12 +54,12 @@ def cv_img_processing_controller(jconfigs):
 
 
 def db_manager_controller(dbfields, cv_data):
-    image_date = VariableClass.img_meta_data(jconfigs)
+    image_data = VariableClass.format_image_data(cv_data)
     db_manager.db_creds_json(jconfigs)
     db_manager.db_connect()
-    exists = db_manager.check_entry_exist(image_date)
 
-    image_data = VariableClass.format_image_data(cv_data)
+    # check if image existing in the db
+    exists = db_manager.check_entry_exist(image_data[8])
 
     if not exists:
         db_manager.image_data(image_data, dbfields)  # for a single db insert
