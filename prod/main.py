@@ -75,7 +75,6 @@ if __name__ == "__main__":
 
         try:
             jconfigs = config_json_parser()
-            print(jconfigs)
             #image_compare.main(jconfigs)
             image_detect.watchdog_run(jconfigs)
             cv_img_data = img_processing_controller(jconfigs)

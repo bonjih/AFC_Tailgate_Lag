@@ -51,7 +51,7 @@ def watchdog_run(jconfigs):
 def event_handler(jconfigs):
     image_path = jconfigs[8]
     file_type = jconfigs[1]
-    patterns = ["*.{}".format(file_type)]  # from global, change file type in config.json
+    patterns = ["*.{}".format(file_type)]
     ignore_patterns = None
     ignore_directories = True
     case_sensitive = True
