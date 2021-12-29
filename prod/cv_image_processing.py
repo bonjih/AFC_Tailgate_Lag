@@ -21,18 +21,22 @@ def load_image(configs):
     global known_distance  # from config.json, known distance to object.
     global known_width  # from config.json, known width of object.
 
+    filtered = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered"
+
     known_distance = configs[6]
     known_width = configs[7]
     file_type = configs[1]
 
+    os.chdir(filtered)
     list_of_files = glob.glob('./*.{}'.format(file_type))
-
     latest_file = max(list_of_files, key=os.path.getctime)
+
     file_name = latest_file[2:]
     img = cv.imread(file_name)
     # resize image to 1280x720 - images in GluPhotos are 1920x1080
     # data sheets for camera says images are HD 720p video, resolution 1280x720
     # img = imutils.resize(img, width=1280)
+
     return img
 
 
@@ -43,7 +47,6 @@ def save_image(processed_file, img):
 
 
 def create_mask(img):
-    img = load_image(img)
     pts_1080 = np.array([[960, 180], [960, 880], [1200, 880], [1200, 180]], np.int32)
     # pts_720 = np.array([[640, 60], [640, 720], [800, 720], [800, 60]], np.int32)
     mask = np.zeros(img.shape, np.uint8)
@@ -99,14 +102,14 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 
     focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
     fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
-    #print(focal_length, fl_to_dist, 'ff', c)
+    # print(focal_length, fl_to_dist, 'ff', c)
 
     return side_a_dist, fl_to_dist, height_of_triangle, c, g
 
 
 def cv_processing(img):
-    img = create_mask(img)
-    img = color_thresh_HSV(img)
+    create_mask(img)
+    color_thresh_HSV(img)
 
     dists = []
     pix_coords = []
@@ -199,7 +202,7 @@ def cv_processing(img):
 
             (side_a_dist, fl_to_dist, c, g, height_of_triangle) = find_area(orig, x_centre, midpoint, xA, yA, color,
                                                                             refObj)
-
+            #
             # cv.imshow("Image", orig)
             # cv.waitKey(0)
 
@@ -212,5 +215,6 @@ def cv_processing(img):
             pix_coords.append(int(yB))
 
         save_image(latest_file, orig)
-
         return dists, pix_coords
+
+
