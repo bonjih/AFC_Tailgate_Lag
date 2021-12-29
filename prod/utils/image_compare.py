@@ -26,8 +26,8 @@ def dir_check():
     samples_exists = os.path.isdir('samples')
 
     if samples_exists is True:
-        dir = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples'
-        for file in os.scandir(dir):
+        dir_ = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples'
+        for file in os.scandir(dir_):
             os.remove(file.path)
 
     if samples_exists is False:
@@ -84,7 +84,7 @@ def template_match():
 
 
 def main(configs):
-    rand_sample(configs)
-    time.sleep(5)
-    template_match()
     dir_check()
+    rand_sample(configs)
+    template_match()
+
