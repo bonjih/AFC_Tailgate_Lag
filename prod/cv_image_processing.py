@@ -107,7 +107,8 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
     return side_a_dist, fl_to_dist, height_of_triangle, c, g
 
 
-def cv_processing(img):
+def cv_processing(configs):
+    img =  load_image(configs)
     create_mask(img)
     color_thresh_HSV(img)
 

@@ -44,9 +44,7 @@ def db_json_parser():
 
 
 def img_processing_controller(jconfig):
-    img = cv_image_processing.load_image(jconfig)
-    cv_data_tup = cv_image_processing.cv_processing(img)
-
+    cv_data_tup = cv_image_processing.cv_processing(jconfig)
     cv_data = cv_data_tup[0] + cv_data_tup[1]
     img_meta_data = VariableClass.img_meta_data(jconfig)
     image_data = (list(img_meta_data) + cv_data)
