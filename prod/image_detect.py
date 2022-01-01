@@ -49,7 +49,7 @@ def watchdog_run(jconfigs):
 
 # main event handler, calls on_created() to notify when a file is added to the dir
 def event_handler(jconfigs):
-    image_path = jconfigs[8]
+    image_path = jconfigs[8]  # path to image for processing
     file_type = jconfigs[1]
     patterns = ["*.{}".format(file_type)]
     ignore_patterns = None
