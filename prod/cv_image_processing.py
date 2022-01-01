@@ -30,7 +30,6 @@ def load_image(configs):
     file_type = configs[1]
 
     file_name = VariableClass.get_latest_image(filtered, file_type)
-    file_name.get_latest_image(filtered, file_type)
     img = cv.imread(file_name[1])
     # resize image to 1280x720 - images in GluPhotos are 1920x1080
     # data sheets for camera says images are HD 720p video, resolution 1280x720
