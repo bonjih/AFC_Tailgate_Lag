@@ -40,7 +40,7 @@ class ImageData:
                         distance_lead, distance_lag, file_size, file_name, num_pixels, date_time_create, image_id
 
 
-# formats variable to for processing the db
+# formats variables before sending to db_manager.py
 def format_image_data(image_data):
     var = (ImageData(image_data[0], image_data[17], image_data[16], image_data[37],
                      image_data[38], image_data[16], image_data[15], image_data[2],
@@ -51,8 +51,18 @@ def format_image_data(image_data):
            var.image_id
 
 
+def get_latest_image(image_path, file_type):
+    os.chdir(image_path)
+    list_of_files = glob.glob('./*.{}'.format(file_type))
+    latest_file = max(list_of_files, key=os.path.getctime)  # gets the most recent image added to the directory
+    file_name = latest_file[2:]
+    image_id = file_name[:-4]
+
+    return image_id, file_name
+
+
 def img_meta_data(configs):
-    image_path = configs[8]
+    image_path = configs[8]  # path to image for processing
     file_type = configs[1]
 
     # define file location .... may not need in fine solution
@@ -69,11 +79,7 @@ def img_meta_data(configs):
     date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
 
     # file name
-    os.chdir(image_path)
-    list_of_files = glob.glob('./*.{}'.format(file_type))
-    latest_file = max(list_of_files, key=os.path.getctime)  # gets the most recent image added to the directory
-    file_name = latest_file[2:]
-    image_id = file_name[:-4]
+    image_id, file_name = get_latest_image(image_path, file_type)
 
     # file size
     f_path = './{}'.format(file_name)

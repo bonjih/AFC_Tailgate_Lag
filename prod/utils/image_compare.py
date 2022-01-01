@@ -17,6 +17,8 @@ import shutil
 import os
 import numpy as np
 
+from prod import VariableClass
+
 samples = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples"
 filtered = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered"
 
@@ -63,12 +65,9 @@ def template_match():
     h, w = template.shape[::]
     threshold = 0.535
 
-    os.chdir(samples)
-    list_of_files = glob.glob('./*.{}'.format(file_type))
-    latest_file = max(list_of_files, key=os.path.getctime)
-    file_name = latest_file[2:]
+    file_name = VariableClass.get_latest_image(samples, file_type)
 
-    sampling = cv.imread(file_name, 0)
+    sampling = cv.imread(file_name[1], 0)
     sampling = cv.blur(sampling, (8, 8))
     res = cv.matchTemplate(sampling, template, cv.TM_CCOEFF_NORMED)
     loc = np.where(res >= threshold)

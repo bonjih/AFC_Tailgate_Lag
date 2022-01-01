@@ -14,6 +14,8 @@ from scipy.spatial import distance as dist
 import glob
 import os
 
+from prod import VariableClass
+
 
 # load recent image
 def load_image(configs):
@@ -27,12 +29,9 @@ def load_image(configs):
     known_width = configs[7]
     file_type = configs[1]
 
-    os.chdir(filtered)
-    list_of_files = glob.glob('./*.{}'.format(file_type))
-    latest_file = max(list_of_files, key=os.path.getctime)
-
-    file_name = latest_file[2:]
-    img = cv.imread(file_name)
+    file_name = VariableClass.get_latest_image(filtered, file_type)
+    file_name.get_latest_image(filtered, file_type)
+    img = cv.imread(file_name[1])
     # resize image to 1280x720 - images in GluPhotos are 1920x1080
     # data sheets for camera says images are HD 720p video, resolution 1280x720
     # img = imutils.resize(img, width=1280)
@@ -108,7 +107,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 
 
 def cv_processing(configs):
-    img =  load_image(configs)
+    img = load_image(configs)
     create_mask(img)
     color_thresh_HSV(img)
 
@@ -215,7 +214,5 @@ def cv_processing(configs):
             pix_coords.append(int(xB))
             pix_coords.append(int(yB))
 
-        save_image(latest_file, orig)
+        #save_image(latest_file, orig)
         return dists, pix_coords
-
-
