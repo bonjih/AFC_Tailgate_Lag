@@ -25,7 +25,7 @@ def load_image(configs):
     known_distance = configs[6]
     known_width = configs[7]
     file_type = configs[1]
-    filtered = configs[1]
+    filtered = configs[8]
 
     file_name = VariableClass.get_latest_image(filtered, file_type)
     img = cv.imread(file_name[1])

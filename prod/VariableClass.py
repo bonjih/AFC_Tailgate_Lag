@@ -66,7 +66,7 @@ def img_meta_data(configs):
     file_type = configs[1]
 
     # define file location .... may not need in fine solution
-    path_to_img = pathlib.Path(image_path)  # change path to image in config.ini
+    path_to_img = pathlib.Path(image_path)  # change path to images in config.ini
     # assert f_name.exists(), f'No such file: {f_name}'  # check that the file exists
 
     # date/time - when the  image is added to the database
