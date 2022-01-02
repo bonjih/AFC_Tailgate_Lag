@@ -54,7 +54,7 @@ def img_processing_controller(jconfig):
 
 def db_manager_controller(dbfields, cv_data):
     image_data = VariableClass.format_image_data(cv_data)
-    sql = dbManagerClass.SQL(jconfigs[2], jconfigs[3], jconfigs[4], jconfigs[5])
+    sql = db_manager.SQL(jconfigs[2], jconfigs[3], jconfigs[4], jconfigs[5])
 
     # check if image existing in the db
     exists = sql.check_entry_exist(image_data[8])
