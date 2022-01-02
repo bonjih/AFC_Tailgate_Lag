@@ -12,7 +12,7 @@ import cv_image_processing
 from prod.utils import image_compare
 import VariableClass
 import ErrorHandlingClass
-import dbManagerClass
+import db_manager
 
 import json
 
