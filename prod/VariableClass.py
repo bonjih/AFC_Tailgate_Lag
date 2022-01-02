@@ -1,9 +1,9 @@
-__author__ = "Ben Hamilton - Titan ICT Consultants"
-__email__ = "ben.hamilton@titanict.com.au"
-__phone__ = "+61 7 3360 4900"
+__author__ = ""
+__email__ = ""
+__phone__ = ""
 __license__ = "xxx"
 __version__ = "1.0.0"
-__maintainer__ = "Anglo American"
+__maintainer__ = ""
 __status__ = "Dev"
 
 import glob
