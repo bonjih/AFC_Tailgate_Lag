@@ -11,7 +11,6 @@ import numpy as np
 import imutils
 from imutils import contours, perspective
 from scipy.spatial import distance as dist
-import glob
 import os
 
 from prod import VariableClass

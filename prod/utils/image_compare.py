@@ -26,8 +26,7 @@ def dir_check():
     samples_exists = os.path.isdir('samples')
 
     if samples_exists is True:
-        dir_ = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples'
-        for file in os.scandir(dir_):
+        for file in os.scandir(samples):
             os.remove(file.path)
 
     if samples_exists is False:
@@ -59,7 +58,7 @@ def rand_sample(configs):
 
 
 def template_match():
-    template = cv.imread(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\template.jpg', 0)
+    template = cv.imread('template.jpg', 0)
     template = cv.blur(template, (8, 8))
     template = cv.dilate(template, ())
     h, w = template.shape[::]
