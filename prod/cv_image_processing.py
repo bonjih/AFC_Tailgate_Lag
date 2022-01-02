@@ -23,11 +23,10 @@ def load_image(configs):
     global known_distance  # from config.json, known distance to object.
     global known_width  # from config.json, known width of object.
 
-    filtered = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered"
-
     known_distance = configs[6]
     known_width = configs[7]
     file_type = configs[1]
+    filtered = configs[1]
 
     file_name = VariableClass.get_latest_image(filtered, file_type)
     img = cv.imread(file_name[1])
@@ -146,13 +145,13 @@ def cv_processing(configs):
     def midpoint(ptA, ptB):
         return (ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5
 
-    for c in cnts:
+    for C in cnts:
         # ignore small contours
-        if cv.contourArea(c) < 30:
+        if cv.contourArea(C) < 30:
             continue
 
         # compute the rotated bounding box of the contour
-        box = cv.minAreaRect(c)
+        box = cv.minAreaRect(C)
         box = cv.boxPoints(box) if imutils.is_cv2() else cv.boxPoints(box)
 
         box = perspective.order_points(box)

@@ -8,7 +8,6 @@ __status__ = "Dev"
 
 # Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
 # puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
-import time
 
 import cv2 as cv
 import random
@@ -20,7 +19,6 @@ import numpy as np
 from prod import VariableClass
 
 samples = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples"
-filtered = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered"
 
 
 def dir_check():
@@ -38,9 +36,11 @@ def dir_check():
 
 def rand_sample(configs):
     global file_type
+    global filtered
 
     image_path = configs[0]
     file_type = configs[1]
+    filtered = configs[8]
 
     os.chdir(image_path)
     list_of_files = glob.glob('./*.{}'.format(file_type))

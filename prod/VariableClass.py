@@ -51,13 +51,13 @@ def format_image_data(image_data):
            var.image_id
 
 
+#  gets the most recent image added to the directory
 def get_latest_image(image_path, file_type):
     os.chdir(image_path)
     list_of_files = glob.glob('./*.{}'.format(file_type))
-    latest_file = max(list_of_files, key=os.path.getctime)  # gets the most recent image added to the directory
+    latest_file = max(list_of_files, key=os.path.getctime)
     file_name = latest_file[2:]
     image_id = file_name[:-4]
-
     return image_id, file_name
 
 
@@ -78,7 +78,7 @@ def img_meta_data(configs):
     datetime_object_create = datetime.strptime(time_crt_str, "%a %b %d %H:%M:%S %Y")
     date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
 
-    # file name
+    # file name and ID
     image_id, file_name = get_latest_image(image_path, file_type)
 
     # file size
