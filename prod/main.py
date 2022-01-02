@@ -12,6 +12,7 @@ import cv_image_processing
 from prod.utils import image_compare
 import VariableClass
 import ErrorHandlingClass
+import dbManagerClass
 
 import json
 
@@ -53,14 +54,13 @@ def img_processing_controller(jconfig):
 
 def db_manager_controller(dbfields, cv_data):
     image_data = VariableClass.format_image_data(cv_data)
-    db_manager.db_creds_json(jconfigs)
-    db_manager.db_connect()
+    sql = dbManagerClass.SQL(jconfigs[2], jconfigs[3], jconfigs[4], jconfigs[5])
 
     # check if image existing in the db
-    exists = db_manager.check_entry_exist(image_data[8])
+    exists = sql.check_entry_exist(image_data[8])
 
     if not exists:
-        db_manager.image_data(image_data, dbfields)  # for a single db insert
+        sql.image_data(image_data, dbfields)
     else:
         print("latest image, '{}', already in the database, skipping....".format(image_data[8]))
 
