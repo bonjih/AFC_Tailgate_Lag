@@ -1,9 +1,9 @@
-__author__ = ""
-__email__ = ""
-__phone__ = ""
+__author__ = "Ben Hamilton - Titan ICT Consultants"
+__email__ = "ben.hamilton@titanict.com.au"
+__phone__ = "+61 7 3360 4900"
 __license__ = "xxx"
 __version__ = "1.0.0"
-__maintainer__ = ""
+__maintainer__ = "Anglo American"
 __status__ = "Dev"
 
 import time
@@ -11,6 +11,7 @@ import pymysql as pymysql  # to catch db errors
 from sqlalchemy import exc  # to catch db insert errors
 import sqlalchemy  # to catch db insert errors
 import shutil
+from prod.utils import Logger
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
@@ -27,9 +28,12 @@ class ErrorMessageHandler:
                 error))
             time.sleep(alarm_delay)
         except ValueError as error:
-            print("Error in 'jconfig.json' format or cannot find an image or extension is incorrect or no file in dir "
-                  "'filtered'. Please check config.json and dir 'filtered: {}".format(error))
+            s = Logger.ErrorLog("Error in 'jconfig.json' format or cannot find an image or extension is incorrect "
+                                "or no file in dir 'filtered'. Please check config.json and dir 'filtered: {}".format(
+                error))
             time.sleep(alarm_delay)
+            s.show()
+
         except AttributeError as error:
             print('Error: {}'.format(error))
             time.sleep(alarm_delay)
