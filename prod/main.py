@@ -7,12 +7,12 @@ __maintainer__ = ""
 __status__ = "Dev"
 
 import image_detect
-import db_manager
 import cv_image_processing
 from prod.utils import image_compare
 import VariableClass
 import ErrorHandlingClass
 import db_manager
+
 
 import json
 
@@ -81,3 +81,6 @@ if __name__ == "__main__":
 
         except Exception as e:
             ErrorHandlingClass.ErrorMessageHandler(e)
+
+
+
