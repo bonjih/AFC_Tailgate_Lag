@@ -13,7 +13,6 @@ import VariableClass
 import ErrorHandlingClass
 import db_manager
 
-
 import json
 
 # controls the error message sent interval in seconds
@@ -54,6 +53,7 @@ def img_processing_controller(jconfig):
 
 def db_manager_controller(dbfields, cv_data):
     image_data = VariableClass.format_image_data(cv_data)
+
     sql = db_manager.SQL(jconfigs[2], jconfigs[3], jconfigs[4], jconfigs[5])
 
     # check if image existing in the db
@@ -67,20 +67,18 @@ def db_manager_controller(dbfields, cv_data):
 
 if __name__ == "__main__":
     # loop forever, waits for a new image
-
+    global cv_img_data
     while True:
         print('Checking for latest image.....')
 
         try:
             jconfigs = config_json_parser()
-            #image_compare.main(jconfigs)
+            # image_compare.main(jconfigs)
             image_detect.watchdog_run(jconfigs)
             cv_img_data = img_processing_controller(jconfigs)
             db_fields = db_json_parser()
             db_manager_controller(db_fields, cv_img_data)
-
         except Exception as e:
             ErrorHandlingClass.ErrorMessageHandler(e)
-
 
 
