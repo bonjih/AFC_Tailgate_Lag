@@ -10,6 +10,7 @@ import logging
 import os
 import datetime
 
+
 # All the log files are created inside ./logs/ dir with current date
 
 
@@ -19,7 +20,7 @@ class SingletonType(type):
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(
-                    SingletonType, cls).__call__(*args, **kwargs)
+                SingletonType, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
@@ -31,8 +32,8 @@ class Logger(object, metaclass=SingletonType):
         self._logger.setLevel(logging.DEBUG)
 
         # creating a logging format
-        fmt = "[%(levelname)s] %(asctime)s :: %(filename)s:%(lineno)d -" \
-            " %(funcName)s() | %(message)s"
+        fmt = "[%(levelname)s] %(asctime)s :: %(filename)s [line:%(lineno)d] -" \
+              " %(funcName)s() | %(message)s"
         formatter = logging.Formatter(fmt)
 
         # ensuring that logs dir exist
@@ -44,7 +45,7 @@ class Logger(object, metaclass=SingletonType):
 
         # setting handlers
         fileHandler = logging.FileHandler(
-                dirname + "/log_" + now.strftime("%Y-%m-%d")+".log")
+            dirname + "/log_" + now.strftime("%Y-%m-%d") + ".log")
         streamHandler = logging.StreamHandler()
 
         fileHandler.setFormatter(formatter)
@@ -57,3 +58,14 @@ class Logger(object, metaclass=SingletonType):
 def get_logger():
     return Logger.__call__()._logger
 
+
+log = get_logger()
+
+
+class ErrorLog:
+
+    def __init__(self, name):
+        self.name = name
+
+    def show(self):
+        log.info("name: %s" % self.name)

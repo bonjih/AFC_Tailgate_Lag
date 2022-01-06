@@ -13,12 +13,11 @@ import sqlalchemy  # to catch db insert errors
 import shutil
 
 from prod import VariableClass
-from prod.utils import Logger
 from main import config_json_parser
+import LoggerClass
 
 config = config_json_parser()
 image_data = VariableClass.img_meta_data(config)
-
 
 alarm_delay = 5
 
@@ -31,38 +30,47 @@ class ErrorMessageHandler:
         try:
             raise error
         except FileNotFoundError as error:
-            s = Logger.ErrorLog("Can not reach 'jconfig.json' or path to image, please check path to image or "
-                                "config.json: {}".format(
+            s = LoggerClass.ErrorLog("Can not reach 'jconfig.json' or path to image: {}".format(
                 error))
             s.show()
             time.sleep(alarm_delay)
         except ValueError as error:
-            s = Logger.ErrorLog("Error in 'jconfig.json' format or cannot find an image or extension is incorrect "
-                                "or no file in dir 'filtered'. Please check config.json and dir 'filtered: {}".format(
-                error))
+            s = LoggerClass.ErrorLog(
+                "Error in 'jconfig.json' format or cannot find an image or extension is incorrect, "
+                "or no file in dir 'filtered'. Please check config.json and dir 'filtered: {}".format(
+                    error))
             s.show()
             time.sleep(alarm_delay)
         except AttributeError as error:
-            s = Logger.ErrorLog('Error: {}'.format(error))
+            s = LoggerClass.ErrorLog('Error: {}'.format(error))
             time.sleep(alarm_delay)
             s.show()
         except TypeError as error:
-            s = Logger.ErrorLog("Usually means image {} lacks detail for processing. Error: {}".format(image_data[1], error))
+            s = LoggerClass.ErrorLog(
+                "Usually means image {} lacks detail for processing. Error: {}".format(image_data[1], error))
             s.show()
             time.sleep(alarm_delay)
         except pymysql.OperationalError as error:
-            print('No connection to database. Please check connection details in config.json: {}'.format(error))
+            s = LoggerClass.ErrorLog(
+                'No connection to database. Please check connection details in config.json: {}'.format(error))
+            s.show()
             time.sleep(alarm_delay)
         except KeyboardInterrupt:
-            print('\n! Received interrupt, quitting threads, restart main.py, check path to image in config.json.\n')
+            s = LoggerClass.ErrorLog(
+                '\n! Received interrupt, quitting threads, restart main.py, check path to image in config.json.\n')
+            s.show()
         except ConnectionResetError as error:
-            print("Database connection restarted. Error: {}".format(error))
+            s = LoggerClass.ErrorLog("Database connection restarted. Error: {}".format(error))
+            s.show()
         except sqlalchemy.exc.OperationalError:
-            print("There is a mismatch between table names in db_fields.json and the database.")
+            s = LoggerClass.ErrorLog("There is a mismatch between table names in db_fields.json and the database.")
+            s.show()
         except PermissionError as error:
-            print("Read/Write: {}".format(error))
+            s = LoggerClass.ErrorLog("Read/Write: {}".format(error))
+            s.show()
         except shutil.SameFileError as error:
-            print("Some Err: {}".format(error))
+            s = LoggerClass.ErrorLog("Some Err: {}".format(error))
+            s.show()
         except OSError as error:
-            print("Some Err: {}".format(error))
-
+            s = LoggerClass.ErrorLog("Can't access the Gelphotos directory: {}".format(error))
+            s.show()
