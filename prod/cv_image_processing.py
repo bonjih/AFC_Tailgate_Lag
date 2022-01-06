@@ -15,17 +15,20 @@ import os
 
 from prod import VariableClass
 
+from prod.config_parser import config_json_parser
 
-# load recent image
-def load_image(configs):
+config = config_json_parser()
+
+
+def load_image(config):
     global latest_file  # file name to global used only for function save_image().
     global known_distance  # from config.json, known distance to object.
     global known_width  # from config.json, known width of object.
 
-    known_distance = configs[6]
-    known_width = configs[7]
-    file_type = configs[1]
-    filtered = configs[8]
+    known_distance = config[6]
+    known_width = config[7]
+    file_type = config[1]
+    filtered = config[8]
 
     file_name = VariableClass.get_latest_image(filtered, file_type)
     img = cv.imread(file_name[1])
@@ -103,8 +106,8 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
     return side_a_dist, fl_to_dist, height_of_triangle, c, g
 
 
-def cv_processing(configs):
-    img = load_image(configs)
+def cv_processing():
+    img = load_image(config)
     create_mask(img)
     color_thresh_HSV(img)
 
@@ -211,5 +214,5 @@ def cv_processing(configs):
             pix_coords.append(int(xB))
             pix_coords.append(int(yB))
 
-        #save_image(latest_file, orig)
+        # save_image(latest_file, orig)
         return dists, pix_coords

@@ -12,6 +12,7 @@ import time
 
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+import config_parser
 
 alarm_delay = 5
 
@@ -27,14 +28,14 @@ def watchdog_timer(state):
         _thread.interrupt_main()
 
 
-def watchdog_run(jconfigs):
+def watchdog_run():
     while True:
         state = {'completed': False}
         watchdog = threading.Thread(target=watchdog_timer, args=(state,))
         watchdog.daemon = True
         watchdog.start()
         try:
-            event_handler(jconfigs)
+            event_handler()
             state['completed'] = True
         except KeyboardInterrupt:
             print('\n! Received interrupt, quitting threads, restart main.py.\n')
@@ -47,20 +48,22 @@ def watchdog_run(jconfigs):
             break
 
 
+config = config_parser.config_json_parser()
+
+
 # main event handler, calls on_created() to notify when a file is added to the dir
-def event_handler(jconfigs):
-    image_path = jconfigs[8]  # path to image for processing
-    file_type = jconfigs[1]
+def event_handler():
+    image_path = config[8]  # path to image for processing in jconfig
+    file_type = config[1]
     patterns = ["*.{}".format(file_type)]
     ignore_patterns = None
     ignore_directories = True
     case_sensitive = True
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
     my_event_handler.on_created = on_created
-    path = image_path  # path to image for watchdog, change in config.json
     go_recursively = True
     file_observer = Observer()
-    file_observer.schedule(my_event_handler, path, recursive=go_recursively)
+    file_observer.schedule(my_event_handler, image_path, recursive=go_recursively)
     file_observer.start()
 
     try:

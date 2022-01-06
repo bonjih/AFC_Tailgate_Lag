@@ -13,6 +13,10 @@ import time
 from datetime import datetime
 from PIL import Image  # count pixels
 
+from prod.config_parser import config_json_parser
+
+config = config_json_parser()
+
 
 class ImageData:
     """holds all database variables
@@ -61,9 +65,9 @@ def get_latest_image(image_path, file_type):
     return image_id, file_name
 
 
-def img_meta_data(configs):
-    image_path = configs[8]  # path to image for processing
-    file_type = configs[1]
+def img_meta_data():
+    image_path = config[8]  # path to image for processing
+    file_type = config[1]
 
     # define file location .... may not need in fine solution
     path_to_img = pathlib.Path(image_path)  # change path to images in config.ini
