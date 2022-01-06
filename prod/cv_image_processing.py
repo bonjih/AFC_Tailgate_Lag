@@ -14,7 +14,6 @@ from scipy.spatial import distance as dist
 import os
 
 from prod import VariableClass
-
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
