@@ -17,24 +17,18 @@ from prod import VariableClass
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
+known_distance = config[6]
+known_width = config[7]
+file_type = config[1]
+filtered = config[8]
 
 
-def load_image(config):
-    global latest_file  # file name to global used only for function save_image().
-    global known_distance  # from config.json, known distance to object.
-    global known_width  # from config.json, known width of object.
-
-    known_distance = config[6]
-    known_width = config[7]
-    file_type = config[1]
-    filtered = config[8]
-
+def load_image():
     file_name = VariableClass.get_latest_image(filtered, file_type)
     img = cv.imread(file_name[1])
     # resize image to 1280x720 - images in GluPhotos are 1920x1080
     # data sheets for camera says images are HD 720p video, resolution 1280x720
     # img = imutils.resize(img, width=1280)
-
     return img
 
 
@@ -106,7 +100,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 
 
 def cv_processing():
-    img = load_image(config)
+    img = load_image()
     create_mask(img)
     color_thresh_HSV(img)
 

@@ -12,9 +12,13 @@ import time
 
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
-import config_parser
+from prod.config_parser import config_json_parser
 
 alarm_delay = 5
+
+config = config_json_parser()
+image_path = config[8]  # path to image for processing in jconfig
+file_type = config[1]
 
 
 def on_created(event):
@@ -48,13 +52,8 @@ def watchdog_run():
             break
 
 
-config = config_parser.config_json_parser()
-
-
 # main event handler, calls on_created() to notify when a file is added to the dir
 def event_handler():
-    image_path = config[8]  # path to image for processing in jconfig
-    file_type = config[1]
     patterns = ["*.{}".format(file_type)]
     ignore_patterns = None
     ignore_directories = True

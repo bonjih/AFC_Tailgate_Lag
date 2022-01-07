@@ -16,6 +16,8 @@ from PIL import Image  # count pixels
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
+image_path = config[8]  # path to image for processing in jconfig
+file_type = config[1]
 
 
 class ImageData:
@@ -66,9 +68,6 @@ def get_latest_image(image_path, file_type):
 
 
 def img_meta_data():
-    image_path = config[8]  # path to image for processing
-    file_type = config[1]
-
     # define file location .... may not need in fine solution
     path_to_img = pathlib.Path(image_path)  # change path to images in config.ini
     # assert f_name.exists(), f'No such file: {f_name}'  # check that the file exists
