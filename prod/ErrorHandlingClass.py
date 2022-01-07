@@ -74,3 +74,6 @@ class ErrorMessageHandler:
         except OSError as error:
             s = LoggerClass.ErrorLog("Can't access the Gelphotos directory: {}".format(error))
             s.show()
+        except Exception as error:
+            s = LoggerClass.ErrorLog("Catch all error and log in [./log]: {}".format(error))
+            s.show()
