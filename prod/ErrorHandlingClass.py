@@ -1,9 +1,9 @@
-__author__ = "Ben Hamilton - Titan ICT Consultants"
-__email__ = "ben.hamilton@titanict.com.au"
-__phone__ = "+61 7 3360 4900"
+__author__ = ""
+__email__ = ""
+__phone__ = ""
 __license__ = "xxx"
 __version__ = "1.0.0"
-__maintainer__ = "Anglo American"
+__maintainer__ = ""
 __status__ = "Dev"
 
 import time
@@ -13,17 +13,17 @@ import sqlalchemy  # to catch db insert errors
 import shutil
 
 from prod import VariableClass
-
-import LoggerClass
+from prod import LoggerClass
 
 image_data = VariableClass.img_meta_data()
+
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
 
 
 class ErrorMessageHandler:
-    """ Error messages"""
+    """ Error messages """
 
     def __init__(self, error):
 
