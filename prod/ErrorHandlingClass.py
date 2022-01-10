@@ -66,3 +66,7 @@ class ErrorMessageHandler:
         except Exception as error:
             LoggerClass.log_processing("Catch all error and log in [./log]: {}".format(error))
             print(type(error))
+        except IndexError as error:
+            LoggerClass.log_processing("Most likely no image in dir ./Gelphotos: {}".format(error))
+            print(type(error))
+

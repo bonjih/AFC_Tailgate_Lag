@@ -34,6 +34,7 @@ def img_compare():
 
     # takes the file path of the image being compared.
     # the script to find newly available photos and comparing them should most likely go here.
+
     sunflower_path = VariableClass.get_latest_image(GELPhotos, file_type)
     img_name = sunflower_path[1]
 
