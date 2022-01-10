@@ -20,13 +20,11 @@ from prod.config_parser import config_json_parser
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-filtered = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered'
-GelPhotos = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\GELPhotos'
+config = config_json_parser()
 
-configs = config_json_parser()
-
-file_type = configs[1]
-GELPhotos = configs[0]  # image from GelPhotos folder
+GELPhotos = config[0]  # image from GelPhotos folder
+file_type = config[1]
+filtered = config[8]
 
 
 def img_compare():
@@ -49,7 +47,7 @@ def img_compare():
     score = tf.nn.softmax(predictions[0])
     add_img_if = class_names[np.argmax(score)], 100 * np.max(score)
     if add_img_if[0] == 'goodphotos':
-        shutil.copy('{}'.format(img_name), filtered)
+        shutil.copy(GELPhotos + '/' + img_name, filtered)
     else:
         print('Skipping image [{}], does not meet quality standards'.format(img_name))
 
