@@ -9,80 +9,46 @@ __status__ = "Dev"
 # Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
 # puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
 
-import cv2 as cv
-import random
-import glob
-import shutil
-import os
+import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 
 from prod import VariableClass
+from prod.config_parser import config_json_parser
 
-samples = r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\samples"
+configs = config_json_parser()
 
-
-def dir_check():
-    os.chdir(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils')
-    samples_exists = os.path.isdir('samples')
-
-    if samples_exists is True:
-        for file in os.scandir(samples):
-            os.remove(file.path)
-
-    if samples_exists is False:
-        os.mkdir("samples")
+file_type = configs[1]
+filtered = configs[8]
 
 
-def rand_sample(configs):
-    global file_type
-    global filtered
+def img_compare():
+    # loads the model from the file name and creates a list of class names
+    model = keras.models.load_model(r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\first_model.h5")
+    class_names = ['badphotos', 'goodphotos']
 
-    image_path = configs[0]
-    file_type = configs[1]
-    filtered = configs[8]
+    # takes the file path of the image being compared.
+    # the script to find newly available photos and comparing them should most likely go here.
+    sunflower_path = VariableClass.get_latest_image(filtered, file_type)
+    img_name = sunflower_path[1]
 
-    os.chdir(image_path)
-    list_of_files = glob.glob('./*.{}'.format(file_type))
+    img = tf.keras.utils.load_img(
+        img_name, target_size=(270, 480)
+    )
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0)  # Create a batch
 
-    file_names = []
-    for img in list_of_files:
-        file_names.append(img[2:])
+    predictions = model.predict(img_array)
+    score = tf.nn.softmax(predictions[0])
 
-    len_dir = len(file_names)
-    len_sample = round(len_dir / 2)
-    rand_num = random.sample(range(len_dir), int(len_sample))
-
-    for num in rand_num:
-        shutil.copy(os.path.join(image_path, file_names[num]),
-                    samples)
-
-
-def template_match():
-    template = cv.imread('template.jpg', 0)
-    template = cv.blur(template, (8, 8))
-    template = cv.dilate(template, ())
-    h, w = template.shape[::]
-    threshold = 0.535
-
-    file_name = VariableClass.get_latest_image(samples, file_type)
-
-    sampling = cv.imread(file_name[1], 0)
-    sampling = cv.blur(sampling, (8, 8))
-    res = cv.matchTemplate(sampling, template, cv.TM_CCOEFF_NORMED)
-    loc = np.where(res >= threshold)
-
-    x = []
-    for pt in zip(*loc[::-1]):
-        x.append(pt[0])
-
-    if len(x) != 0 and (max(x) - min(x)) < 100:
-        # range = max(x) - min(x)
-        # print(img, range)
-        shutil.move(file_name, '{}/'.format(filtered))
+    # prints out whether the image is good or not.
+    # whether the image is good or not is stored in class_names[np.argmax(score).
+    print(
+        "This image most likely belongs to {} with a {:.2f} percent confidence."
+            .format(class_names[np.argmax(score)], 100 * np.max(score))
+    )
 
 
-def main(configs):
-    dir_check()
-    rand_sample(configs)
-    template_match()
+def main():
+    img_compare()
 

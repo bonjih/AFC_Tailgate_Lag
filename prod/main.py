@@ -22,7 +22,6 @@ def img_processing_controller():
     img_meta_data = VariableClass.img_meta_data()
     cv_data_tup = cv_image_processing.cv_processing()
     cv_data = cv_data_tup[0] + cv_data_tup[1]
-
     image_data = (list(img_meta_data) + cv_data)
     return image_data
 
@@ -49,7 +48,7 @@ if __name__ == "__main__":
         print('Checking for latest image.....')
 
         try:
-            # image_compare.main(jconfigs)
+            image_compare.main()
             image_detect.watchdog_run()
             cv_img_data = img_processing_controller()
             db_fields = config_parser.db_json_parser()
