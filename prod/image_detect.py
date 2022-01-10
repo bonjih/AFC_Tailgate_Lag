@@ -12,6 +12,8 @@ import time
 
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+
+from prod import ErrorHandlingClass
 from prod.config_parser import config_json_parser
 
 alarm_delay = 5
@@ -41,10 +43,14 @@ def watchdog_run():
         try:
             event_handler()
             state['completed'] = True
-        except KeyboardInterrupt:
-            print('\n! Received interrupt, quitting threads, restart main.py.\n')
+        except KeyboardInterrupt as e:
+            #print('\n! Received interrupt, quitting threads, restart main.py.\n')
+
+            ErrorHandlingClass.ErrorMessageHandler(e)
+
         except FileNotFoundError as e:
-            print("Can not reach path image, please check path to image in config.json: {}".format(e))
+            #print("Can not reach path image, please check path to image in config.json: {}".format(e))
+            ErrorHandlingClass.ErrorMessageHandler(e)
             time.sleep(alarm_delay)
 
             pass
@@ -69,5 +75,6 @@ def event_handler():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        #ErrorHandlingClass.ErrorMessageHandler(e)
         file_observer.stop()
     file_observer.join()

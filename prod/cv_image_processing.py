@@ -13,23 +13,29 @@ from imutils import contours, perspective
 from scipy.spatial import distance as dist
 import os
 
-from prod import VariableClass
+from prod import VariableClass, ErrorHandlingClass
 from prod.config_parser import config_json_parser
 
-config = config_json_parser()
-known_distance = config[6]
-known_width = config[7]
-file_type = config[1]
-filtered = config[8]
+try:
+    config = config_json_parser()
+    known_distance = config[6]
+    known_width = config[7]
+    file_type = config[1]
+    filtered = config[8]
+except Exception as e:
+    print(e)
 
 
-def load_image():
-    file_name = VariableClass.get_latest_image(filtered, file_type)
-    img = cv.imread(file_name[1])
-    # resize image to 1280x720 - images in GluPhotos are 1920x1080
-    # data sheets for camera says images are HD 720p video, resolution 1280x720
-    # img = imutils.resize(img, width=1280)
-    return img
+try:
+    def load_image():
+        file_name = VariableClass.get_latest_image(filtered, file_type)
+        img = cv.imread(file_name[1])
+        # resize image to 1280x720 - images in GluPhotos are 1920x1080
+        # data sheets for camera says images are HD 720p video, resolution 1280x720
+        # img = imutils.resize(img, width=1280)
+        return img
+except Exception as e:
+    ErrorHandlingClass.ErrorMessageHandler(e)
 
 
 def save_image(processed_file, img):
@@ -54,6 +60,8 @@ def color_thresh_HSV(img):
     hsv_upper = np.array([0, 255, 255])
     mask = cv.inRange(hsv, hsv_lower, hsv_upper)
     result = cv.bitwise_and(original, original, mask=mask)
+    # cv.imshow("Image", result)
+    # cv.waitKey(0)
     return result
 
 
@@ -101,7 +109,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 
 def cv_processing():
     img = load_image()
-    create_mask(img)
+    img = create_mask(img)
     color_thresh_HSV(img)
 
     dists = []

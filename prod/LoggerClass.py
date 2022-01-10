@@ -10,7 +10,6 @@ import logging
 import os
 import datetime
 
-
 # All the log files are created inside ./logs/ dir with current date
 
 
@@ -69,3 +68,8 @@ class ErrorLog:
 
     def show(self):
         log.info("name: %s" % self.name)
+
+
+def log_processing(message):
+    s = ErrorLog(message)
+    s.show()

@@ -9,10 +9,12 @@ __status__ = "Dev"
 import glob
 import os
 import pathlib
+import re
 import time
 from datetime import datetime
 from PIL import Image  # count pixels
 
+from prod import ErrorHandlingClass, LoggerClass, config_parser
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
@@ -57,39 +59,67 @@ def format_image_data(image_data):
            var.image_id
 
 
+def file_type_check():
+    configs = config_parser.config_json_parser()
+    list_of_files = glob.glob('./*')
+    result = tuple(os.path.splitext(list_of_files[0]))
+    result2 = '.' + configs[1]
+    if result2 != result[1]:
+        return False
+    else:
+        return True
+
+
+def file_path_check():
+    configs = config_parser.config_json_parser()
+    if image_path != configs[8]:
+        return False
+    else:
+        return True
+
+
 #  gets the most recent image added to the directory
 def get_latest_image(image_path, file_type):
     os.chdir(image_path)
-    list_of_files = glob.glob('./*.{}'.format(file_type))
-    latest_file = max(list_of_files, key=os.path.getctime)
-    file_name = latest_file[2:]
-    image_id = file_name[:-4]
-    return image_id, file_name
+    result = file_type_check()
+    if result is True:
+        list_of_files = glob.glob('./*.{}'.format(file_type))
+        latest_file = max(list_of_files, key=os.path.getctime)
+        file_name = latest_file[2:]
+        image_id = file_name[:-4]
+        return image_id, file_name
+    else:
+        pass
 
 
 def img_meta_data():
     # define file location .... may not need in fine solution
-    path_to_img = pathlib.Path(image_path)  # change path to images in config.ini
-    # assert f_name.exists(), f'No such file: {f_name}'  # check that the file exists
+    result = file_path_check()
 
-    # date/time - when the  image is added to the database
-    now = datetime.now()
-    date_time_db = now.strftime('%Y-%m-%d %H:%M:%S')
+    if result is True:
+        path_to_img = pathlib.Path(image_path)  # change path to images in jconfig.json
+        # assert path_to_img.exists(), f'No such file: {path_to_img}'  # check that the file exists
 
-    # date/time - when the image was created
-    time_crt_str = (time.ctime(os.path.getmtime(path_to_img)))
-    datetime_object_create = datetime.strptime(time_crt_str, "%a %b %d %H:%M:%S %Y")
-    date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
+        # date/time - when the  image is added to the database
+        now = datetime.now()
+        date_time_db = now.strftime('%Y-%m-%d %H:%M:%S')
 
-    # file name and ID
-    image_id, file_name = get_latest_image(image_path, file_type)
+        # date/time - when the image was created
+        time_crt_str = (time.ctime(os.path.getmtime(path_to_img)))
+        datetime_object_create = datetime.strptime(time_crt_str, "%a %b %d %H:%M:%S %Y")
+        date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
 
-    # file size
-    f_path = './{}'.format(file_name)
-    file_size = os.path.getsize(f_path)
+        # file name and ID
+        image_id, file_name = get_latest_image(image_path, file_type)
 
-    # no of pixels
-    width, height = Image.open(file_name).size
-    num_pixels = width * height
+        # file size
+        f_size = './{}'.format(file_name)
+        file_size = os.path.getsize(f_size)
 
-    return date_time_db, file_name, file_size, num_pixels, date_time_create, image_id
+        # no of pixels
+        width, height = Image.open(file_name).size
+        num_pixels = width * height
+
+        return date_time_db, file_name, file_size, num_pixels, date_time_create, image_id
+    else:
+        pass
