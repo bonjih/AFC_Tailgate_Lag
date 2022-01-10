@@ -110,7 +110,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
 def cv_processing():
     img = load_image()
     img = create_mask(img)
-    color_thresh_HSV(img)
+    img = color_thresh_HSV(img)
 
     dists = []
     pix_coords = []
