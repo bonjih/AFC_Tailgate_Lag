@@ -21,7 +21,7 @@ try:
     known_distance = config[6]
     known_width = config[7]
     file_type = config[1]
-    filtered = config[8]
+    filtered = config[8]  # path to image for CV processing in jconfig.json
 except Exception as e:
     print(e)
 

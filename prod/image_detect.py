@@ -19,7 +19,7 @@ from prod.config_parser import config_json_parser
 alarm_delay = 5
 
 config = config_json_parser()
-image_path = config[8]  # path to image for processing in jconfig
+image_path = config[8]  # path to image for CV processing in jconfig.json
 file_type = config[1]
 
 

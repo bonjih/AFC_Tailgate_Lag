@@ -18,7 +18,7 @@ from prod import ErrorHandlingClass, LoggerClass, config_parser
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
-image_path = config[8]  # path to image for processing in jconfig
+image_path = config[8]  # path to image for CV processing in jconfig.json
 file_type = config[1]
 
 
@@ -72,7 +72,7 @@ def file_type_check():
 
 def file_path_check():
     configs = config_parser.config_json_parser()
-    if image_path != configs[8]:
+    if image_path != configs[8]:  # path to image for processing in jconfig.json
         return False
     else:
         return True

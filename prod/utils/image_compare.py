@@ -8,18 +8,25 @@ __status__ = "Dev"
 
 # Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
 # puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
-
+import os
 import tensorflow as tf
+
 from tensorflow import keras
 import numpy as np
+import shutil
 
 from prod import VariableClass
 from prod.config_parser import config_json_parser
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+filtered = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\filtered'
+GelPhotos = r'C:\Users\ben.hamilton\PycharmProjects\Anglo\GELPhotos'
+
 configs = config_json_parser()
 
 file_type = configs[1]
-filtered = configs[8]
+GELPhotos = configs[0]  # image from GelPhotos folder
 
 
 def img_compare():
@@ -29,7 +36,7 @@ def img_compare():
 
     # takes the file path of the image being compared.
     # the script to find newly available photos and comparing them should most likely go here.
-    sunflower_path = VariableClass.get_latest_image(filtered, file_type)
+    sunflower_path = VariableClass.get_latest_image(GELPhotos, file_type)
     img_name = sunflower_path[1]
 
     img = tf.keras.utils.load_img(
@@ -40,15 +47,19 @@ def img_compare():
 
     predictions = model.predict(img_array)
     score = tf.nn.softmax(predictions[0])
+    add_img_if = class_names[np.argmax(score)], 100 * np.max(score)
+    if add_img_if[0] == 'goodphotos':
+        shutil.copy('{}'.format(img_name), filtered)
+    else:
+        print('Skipping image [{}], does not meet quality standards'.format(img_name))
 
     # prints out whether the image is good or not.
     # whether the image is good or not is stored in class_names[np.argmax(score).
-    print(
-        "This image most likely belongs to {} with a {:.2f} percent confidence."
-            .format(class_names[np.argmax(score)], 100 * np.max(score))
-    )
+    # print(
+    #     "This image most likely belongs to {} with a {:.2f} percent confidence."
+    #         .format(class_names[np.argmax(score)], 100 * np.max(score))
+    # )
 
 
 def main():
     img_compare()
-
