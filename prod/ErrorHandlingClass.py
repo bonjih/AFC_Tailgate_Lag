@@ -35,7 +35,6 @@ class ErrorMessageHandler:
         except AttributeError as error:
             LoggerClass.log_processing('Error: {}'.format(error))
             time.sleep(alarm_delay)
-
         except FileNotFoundError as error:
             LoggerClass.log_processing("Can not reach 'jconfig.json' or path to image: {}".format(error))
             time.sleep(alarm_delay)
@@ -62,11 +61,13 @@ class ErrorMessageHandler:
         except shutil.SameFileError as error:
             LoggerClass.log_processing("Some Err: {}".format(error))
         except OSError as error:
-            LoggerClass.log_processing("Can't access the Gelphotos directory: {}".format(error))
+            LoggerClass.log_processing("Can't access the Gelphotos or another directory, check error: {}".format(error))
+            time.sleep(alarm_delay)
         except IndexError as error:
             LoggerClass.log_processing("Most likely no image in dir ./Gelphotos: {}".format(error))
             time.sleep(alarm_delay)
         except Exception as error:
             LoggerClass.log_processing("Catch all error and log in [./log]: {}".format(error))
             print(type(error))
+            time.sleep(alarm_delay)
 
