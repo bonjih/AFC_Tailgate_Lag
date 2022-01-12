@@ -13,6 +13,7 @@ import VariableClass
 import ErrorHandlingClass
 import db_manager
 import config_parser
+import time
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
@@ -49,6 +50,7 @@ if __name__ == "__main__":
 
         try:
             image_compare.main()
+            time.sleep(alarm_delay)
             image_detect.watchdog_run()
             cv_img_data = img_processing_controller()
             db_fields = config_parser.db_json_parser()
