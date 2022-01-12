@@ -93,11 +93,10 @@ def get_latest_image(image_path, file_type):
 
 
 def img_meta_data():
-    # define file location .... may not need in fine solution
     result = file_path_check()
 
     if result is True:
-        path_to_img = pathlib.Path(image_path)  # change path to images in jconfig.json
+        path_to_img = pathlib.Path(image_path)  # change path to images in jconfig.json 'filtered'
         # assert path_to_img.exists(), f'No such file: {path_to_img}'  # check that the file exists
 
         # date/time - when the  image is added to the database

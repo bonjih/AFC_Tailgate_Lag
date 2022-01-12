@@ -10,7 +10,6 @@ __status__ = "Dev"
 # puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
 import os
 import tensorflow as tf
-
 from tensorflow import keras
 import numpy as np
 import shutil
@@ -48,16 +47,9 @@ def img_compare():
     score = tf.nn.softmax(predictions[0])
     add_img_if = class_names[np.argmax(score)], 100 * np.max(score)
     if add_img_if[0] == 'goodphotos':
-        shutil.copy(GELPhotos + '/' + img_name, filtered)
+        shutil.copy('{}/{}'.format(GELPhotos, img_name), filtered)
     else:
         print('Skipping image [{}], does not meet quality standards'.format(img_name))
-
-    # prints out whether the image is good or not.
-    # whether the image is good or not is stored in class_names[np.argmax(score).
-    # print(
-    #     "This image most likely belongs to {} with a {:.2f} percent confidence."
-    #         .format(class_names[np.argmax(score)], 100 * np.max(score))
-    # )
 
 
 def main():
