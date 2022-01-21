@@ -13,15 +13,16 @@ from imutils import contours, perspective
 from scipy.spatial import distance as dist
 import os
 
-from prod import VariableClass, ErrorHandlingClass
+from prod import VariableClass, ErrorHandlingClass, global_variables
 from prod.config_parser import config_json_parser
 
 try:
-    config = config_json_parser()
-    known_distance = config[6]
-    known_width = config[7]
-    file_type = config[1]
-    filtered = config[8]  # path to image for CV processing in jconfig.json
+    GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
+    file_type = global_variables.file_type
+    filtered = global_variables.filtered  # path to image for CV processing in jconfig.json
+    known_distance = global_variables.known_distance
+    known_width = global_variables.known_width
+
 except Exception as e:
     print(e)
 

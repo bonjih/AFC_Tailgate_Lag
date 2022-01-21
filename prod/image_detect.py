@@ -13,14 +13,13 @@ import time
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from prod import ErrorHandlingClass
-from prod.config_parser import config_json_parser
+from prod import ErrorHandlingClass, global_variables
 
 alarm_delay = 5
 
-config = config_json_parser()
-image_path = config[8]  # path to image for CV processing in jconfig.json
-file_type = config[1]
+GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
+file_type = global_variables.file_type
+filtered = global_variables.filtered
 
 
 def on_created(event):
@@ -68,7 +67,7 @@ def event_handler():
     my_event_handler.on_created = on_created
     go_recursively = True
     file_observer = Observer()
-    file_observer.schedule(my_event_handler, image_path, recursive=go_recursively)
+    file_observer.schedule(my_event_handler, filtered, recursive=go_recursively)
     file_observer.start()
 
     try:

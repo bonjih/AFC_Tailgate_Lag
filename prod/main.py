@@ -6,14 +6,11 @@ __version__ = "1.0.0"
 __maintainer__ = ""
 __status__ = "Dev"
 
-import image_detect
-import cv_image_processing
-from prod.utils import image_compare
-import VariableClass
-import ErrorHandlingClass
-import db_manager
-import config_parser
 import time
+
+from prod import image_detect, cv_image_processing, global_variables
+from prod import VariableClass, ErrorHandlingClass, db_manager, config_parser
+from prod.utils import image_compare
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
@@ -28,10 +25,10 @@ def img_processing_controller():
 
 
 def db_manager_controller(dbfields, cv_data):
-    jconfigs = config_parser.config_json_parser()
     image_data = VariableClass.format_image_data(cv_data)
 
-    sql = db_manager.SQL(jconfigs[2], jconfigs[3], jconfigs[4], jconfigs[5])
+    sql = db_manager.SQL(global_variables.user, global_variables.passwd, global_variables.host,
+                         global_variables.database)
 
     # check if image existing in the db
     exists = sql.check_entry_exist(image_data[8])

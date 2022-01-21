@@ -14,12 +14,11 @@ import time
 from datetime import datetime
 from PIL import Image  # count pixels
 
-from prod import ErrorHandlingClass, LoggerClass, config_parser
-from prod.config_parser import config_json_parser
+from prod import global_variables
 
-config = config_json_parser()
-image_path = config[8]  # path to image for CV processing in jconfig.json
-file_type = config[1]
+GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
+file_type = global_variables.file_type
+filtered = global_variables.filtered
 
 
 class ImageData:
@@ -60,10 +59,9 @@ def format_image_data(image_data):
 
 
 def file_type_check():
-    configs = config_parser.config_json_parser()
     list_of_files = glob.glob('./*')
     result = tuple(os.path.splitext(list_of_files[0]))
-    result2 = '.' + configs[1]
+    result2 = '.' + file_type
     if result2 != result[1]:
         return False
     else:
@@ -71,8 +69,7 @@ def file_type_check():
 
 
 def file_path_check():
-    configs = config_parser.config_json_parser()
-    if image_path != configs[8]:  # path to image for processing in jconfig.json
+    if filtered != filtered:  # path to image for processing in jconfig.json
         return False
     else:
         return True
@@ -96,7 +93,7 @@ def img_meta_data():
     result = file_path_check()
 
     if result is True:
-        path_to_img = pathlib.Path(image_path)  # change path to images in jconfig.json 'filtered'
+        path_to_img = pathlib.Path(filtered)  # change path to images in jconfig.json 'filtered'
         # assert path_to_img.exists(), f'No such file: {path_to_img}'  # check that the file exists
 
         # date/time - when the  image is added to the database
@@ -109,7 +106,7 @@ def img_meta_data():
         date_time_create = (datetime_object_create.strftime('%Y-%m-%d %H:%M:%S'))
 
         # file name and ID
-        image_id, file_name = get_latest_image(image_path, file_type)
+        image_id, file_name = get_latest_image(filtered, file_type)
 
         # file size
         f_size = './{}'.format(file_name)
