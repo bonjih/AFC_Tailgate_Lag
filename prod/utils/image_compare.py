@@ -8,22 +8,22 @@ __status__ = "Dev"
 
 # Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
 # puts all similar images in AISMORLAG01 c:\\gate_end_lag\scripts\filtered
+
 import os
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 import shutil
 
-from prod import VariableClass
-from prod.config_parser import config_json_parser
+from prod import VariableClass, global_variables
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-config = config_json_parser()
+variables = global_variables.global_vars()
 
-GELPhotos = config[0]  # image from GelPhotos folder
-file_type = config[1]
-filtered = config[8]
+GELPhotos = variables[0]  # image from GelPhotos folder
+file_type = variables[1]
+filtered = variables[2]  # image for processing CV
 
 
 def img_compare():
