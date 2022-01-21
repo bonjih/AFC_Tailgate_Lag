@@ -14,7 +14,6 @@ from scipy.spatial import distance as dist
 import os
 
 from prod import VariableClass, ErrorHandlingClass, global_variables
-from prod.config_parser import config_json_parser
 
 try:
     GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder

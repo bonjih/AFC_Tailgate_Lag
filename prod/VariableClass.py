@@ -9,7 +9,6 @@ __status__ = "Dev"
 import glob
 import os
 import pathlib
-import re
 import time
 from datetime import datetime
 from PIL import Image  # count pixels
