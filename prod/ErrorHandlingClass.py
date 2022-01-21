@@ -39,7 +39,8 @@ class ErrorMessageHandler:
         except ValueError as error:
 
             LoggerClass.log_processing("Error in 'jconfig.json' format or cannot find an image or extension is "
-                                       "incorrect, or no file in dir 'filtered'. Check config.json and dir 'filtered: "
+                                       "incorrect, or no file in dir 'filtered, or bad read image'. "
+                                       "Check config.json and dir 'filtered: "
                                        "{}".format(error))
             time.sleep(alarm_delay)
         except TypeError as error:
