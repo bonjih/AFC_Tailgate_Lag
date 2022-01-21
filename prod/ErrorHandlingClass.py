@@ -17,7 +17,9 @@ from prod import LoggerClass, global_variables
 # controls the error message sent interval in seconds
 alarm_delay = 5
 
-file_type = global_variables.file_type
+variables = global_variables.global_vars()
+
+file_type = variables[1]
 
 
 class ErrorMessageHandler:
@@ -38,7 +40,7 @@ class ErrorMessageHandler:
             time.sleep(alarm_delay)
         except ValueError as error:
 
-            LoggerClass.log_processing("Error in 'jconfig.json' format or cannot find an image or extension is "
+            LoggerClass.log_processing("Image: Error in 'jconfig.json' format or cannot find an image or extension is "
                                        "incorrect, or no file in dir 'filtered, or bad read image'. "
                                        "Check config.json and dir 'filtered: "
                                        "{}".format(error))

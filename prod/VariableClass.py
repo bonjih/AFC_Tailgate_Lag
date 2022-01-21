@@ -15,9 +15,11 @@ from PIL import Image  # count pixels
 
 from prod import global_variables
 
-GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
-file_type = global_variables.file_type
-filtered = global_variables.filtered
+variables = global_variables.global_vars()
+
+GELPhotos = variables[0]  # image from GelPhotos folder
+file_type = variables[1]
+filtered = variables[2]  # image for processing CV
 
 
 class ImageData:

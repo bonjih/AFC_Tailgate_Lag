@@ -16,11 +16,13 @@ import os
 from prod import VariableClass, ErrorHandlingClass, global_variables
 
 try:
-    GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
-    file_type = global_variables.file_type
-    filtered = global_variables.filtered  # path to image for CV processing in jconfig.json
-    known_distance = global_variables.known_distance
-    known_width = global_variables.known_width
+    variables = global_variables.global_vars()
+
+    GELPhotos = variables[0]  # image from GelPhotos folder
+    file_type = variables[1]
+    filtered = variables[2]  # image for processing CV
+    known_distance = variables[7]
+    known_width = variables[8]
 
 except Exception as e:
     print(e)

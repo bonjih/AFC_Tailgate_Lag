@@ -17,9 +17,11 @@ from prod import ErrorHandlingClass, global_variables
 
 alarm_delay = 5
 
-GELPhotos = global_variables.GELPhotos  # image from GelPhotos folder
-file_type = global_variables.file_type
-filtered = global_variables.filtered
+variables = global_variables.global_vars()
+
+GELPhotos = variables[0]  # image from GelPhotos folder
+file_type = variables[1]
+filtered = variables[2]  # image for processing CV
 
 
 def on_created(event):
