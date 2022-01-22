@@ -13,13 +13,13 @@ import time
 from datetime import datetime
 from PIL import Image  # count pixels
 
-from prod import global_variables
+from prod import global_conf_variables
 
-variables = global_variables.global_vars()
+variables = global_conf_variables.GlobalVars
 
-GELPhotos = variables[0]  # image from GelPhotos folder
-file_type = variables[1]
-filtered = variables[2]  # image for processing CV
+GELPhotos = variables.GELPhotos  # image from GelPhotos folder
+file_type = variables.file_type
+filtered = variables.filtered  # image for processing CV
 
 
 class ImageData:

@@ -13,16 +13,16 @@ from imutils import contours, perspective
 from scipy.spatial import distance as dist
 import os
 
-from prod import VariableClass, ErrorHandlingClass, global_variables
+from prod import VariableClass, ErrorHandlingClass, global_conf_variables
 
 try:
-    variables = global_variables.global_vars()
+    variables = global_conf_variables.GlobalVars
 
-    GELPhotos = variables[0]  # image from GelPhotos folder
-    file_type = variables[1]
-    filtered = variables[2]  # image for processing CV
-    known_distance = variables[7]
-    known_width = variables[8]
+    GELPhotos = variables.GELPhotos  # image from GelPhotos folder
+    file_type = variables.file_type
+    filtered = variables.filtered  # image for processing CV
+    known_distance = variables.known_distance
+    known_width = variables.known_width
 
 except Exception as e:
     print(e)

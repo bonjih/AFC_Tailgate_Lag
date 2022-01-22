@@ -13,15 +13,15 @@ import time
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from prod import ErrorHandlingClass, global_variables
+from prod import ErrorHandlingClass, global_conf_variables
 
 alarm_delay = 5
 
-variables = global_variables.global_vars()
+variables = global_conf_variables.GlobalVars
 
-GELPhotos = variables[0]  # image from GelPhotos folder
-file_type = variables[1]
-filtered = variables[2]  # image for processing CV
+GELPhotos = variables.GELPhotos  # image from GelPhotos folder
+file_type = variables.file_type
+filtered = variables.filtered  # image for processing CV
 
 
 def on_created(event):

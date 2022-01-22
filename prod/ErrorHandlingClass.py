@@ -12,14 +12,14 @@ from sqlalchemy import exc  # to catch db insert errors
 import sqlalchemy  # to catch db insert errors
 import shutil
 
-from prod import LoggerClass, global_variables
+from prod import LoggerClass, global_conf_variables
 
 # controls the error message sent interval in seconds
 alarm_delay = 5
 
-variables = global_variables.global_vars()
+variables = global_conf_variables.GlobalVars
 
-file_type = variables[1]
+file_type = variables.file_type
 
 
 class ErrorMessageHandler:
