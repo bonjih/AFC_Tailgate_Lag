@@ -17,7 +17,7 @@ from prod import LoggerClass, global_conf_variables
 # controls the error message sent interval in seconds
 alarm_delay = 5
 
-variables = global_conf_variables.GlobalVars
+variables = global_conf_variables.GlobalConfVars
 
 file_type = variables.file_type
 

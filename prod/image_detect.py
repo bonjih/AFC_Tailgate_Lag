@@ -17,7 +17,7 @@ from prod import ErrorHandlingClass, global_conf_variables
 
 alarm_delay = 5
 
-variables = global_conf_variables.GlobalVars
+variables = global_conf_variables.GlobalConfVars
 
 GELPhotos = variables.GELPhotos  # image from GelPhotos folder
 file_type = variables.file_type

@@ -15,7 +15,7 @@ from PIL import Image  # count pixels
 
 from prod import global_conf_variables
 
-variables = global_conf_variables.GlobalVars
+variables = global_conf_variables.GlobalConfVars
 
 GELPhotos = variables.GELPhotos  # image from GelPhotos folder
 file_type = variables.file_type

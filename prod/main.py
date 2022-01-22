@@ -26,7 +26,7 @@ def img_processing_controller():
 
 def db_manager_controller(dbfields, cv_data):
     image_data = VariableClass.format_image_data(cv_data)
-    variables = global_conf_variables.GlobalVars
+    variables = global_conf_variables.GlobalConfVars
 
     sql = db_manager.SQL(variables.user, variables.passwd, variables.host, variables.database)
 

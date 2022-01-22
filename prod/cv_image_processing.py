@@ -16,7 +16,7 @@ import os
 from prod import VariableClass, ErrorHandlingClass, global_conf_variables
 
 try:
-    variables = global_conf_variables.GlobalVars
+    variables = global_conf_variables.GlobalConfVars
 
     GELPhotos = variables.GELPhotos  # image from GelPhotos folder
     file_type = variables.file_type

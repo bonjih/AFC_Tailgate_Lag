@@ -11,7 +11,7 @@ from prod.config_parser import config_json_parser
 config = config_json_parser()
 
 
-class GlobalVars:
+class GlobalConfVars:
     GELPhotos = config[0]  # image from GelPhotos folder
     file_type = config[1]
     filtered = config[2]  # where scripts puts new images to process cv

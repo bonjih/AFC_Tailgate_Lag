@@ -19,7 +19,7 @@ from prod import VariableClass, global_conf_variables
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-variables = global_conf_variables.GlobalVars
+variables = global_conf_variables.GlobalConfVars
 
 GELPhotos = variables.GELPhotos  # image from GelPhotos folder
 file_type = variables.file_type
