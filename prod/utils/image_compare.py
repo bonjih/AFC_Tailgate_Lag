@@ -15,15 +15,15 @@ from tensorflow import keras
 import numpy as np
 import shutil
 
-from prod import VariableClass, global_variables
+from prod import VariableClass, global_conf_variables
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-variables = global_variables.global_vars()
+variables = global_conf_variables.GlobalVars
 
-GELPhotos = variables[0]  # image from GelPhotos folder
-file_type = variables[1]
-filtered = variables[2]  # image for processing CV
+GELPhotos = variables.GELPhotos  # image from GelPhotos folder
+file_type = variables.file_type
+filtered = variables.filtered  # image for processing CV
 
 
 def img_compare():
