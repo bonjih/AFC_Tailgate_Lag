@@ -12,6 +12,9 @@ config = config_json_parser()
 
 
 class ConfigDict(dict):
+    """
+    creates a dictionary from config.json
+    """
 
     def __init__(self):
         super().__init__()
