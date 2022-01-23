@@ -12,12 +12,14 @@ __status__ = "Dev"
 #############################################
 import json
 
+configs = {}
+
 
 def config_json_parser():
     with open(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\config.json', 'r') as jsonFile:
         data = json.load(jsonFile)
-        pairs = data.items()
-        return pairs
+        configs.update(data.items())
+    return configs
 
 
 def db_json_parser():
