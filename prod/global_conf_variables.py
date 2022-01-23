@@ -13,7 +13,7 @@ config = config_json_parser()
 
 class ConfigDict(dict):
     """
-    creates a dictionary from config.json
+    creates a dictionary from jconfig / db_fields.json
     """
 
     def __init__(self):
@@ -28,15 +28,19 @@ dict_obj = ConfigDict()
 
 
 def get_values():
-    for key, value in config:
+    for key, value in config.items():
         dict_obj.add(key, value)
     return list(dict_obj.values())
 
 
 def get_keys():
-    for key, value in config:
+    for key, value in config.items():
         dict_obj.add(key, value)
     return list(dict_obj.keys())
+
+
+
+
 
 
 
@@ -61,6 +65,3 @@ def get_keys():
 #
 #     def __init__(self, configs):
 #         self.configs = configs
-
-
-
