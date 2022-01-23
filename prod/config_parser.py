@@ -14,13 +14,10 @@ import json
 
 
 def config_json_parser():
-    config_values = []
-
     with open(r'C:\Users\ben.hamilton\PycharmProjects\Anglo\config.json', 'r') as jsonFile:
         data = json.load(jsonFile)
-        for key, value in data.items():
-            config_values.append(value)
-    return config_values
+        pairs = data.items()
+        return pairs
 
 
 def db_json_parser():

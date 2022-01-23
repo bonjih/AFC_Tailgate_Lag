@@ -16,13 +16,13 @@ import os
 from prod import VariableClass, ErrorHandlingClass, global_conf_variables
 
 try:
-    variables = global_conf_variables.GlobalConfVars
+    values = global_conf_variables.get_values()
 
-    GELPhotos = variables.GELPhotos  # image from GelPhotos folder
-    file_type = variables.file_type
-    filtered = variables.filtered  # image for processing CV
-    known_distance = variables.known_distance
-    known_width = variables.known_width
+    GELPhotos = values[0]  # image from GelPhotos folder
+    file_type = values[1]
+    filtered = values[2]  # image for processing CV
+    known_distance = values[7]
+    known_width = values[8]
 
 except Exception as e:
     print(e)

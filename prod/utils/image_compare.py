@@ -16,14 +16,18 @@ import numpy as np
 import shutil
 
 from prod import VariableClass, global_conf_variables
+from prod.config_parser import config_json_parser
+
+config = config_json_parser()
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-variables = global_conf_variables.GlobalConfVars
+values = global_conf_variables.get_values()
 
-GELPhotos = variables.GELPhotos  # image from GelPhotos folder
-file_type = variables.file_type
-filtered = variables.filtered  # image for processing CV
+GELPhotos = values[0]  # image from GelPhotos folder
+file_type = values[1]
+filtered = values[2]  # image for processing CV
 
 
 def img_compare():

@@ -26,9 +26,9 @@ def img_processing_controller():
 
 def db_manager_controller(dbfields, cv_data):
     image_data = VariableClass.format_image_data(cv_data)
-    variables = global_conf_variables.GlobalConfVars
+    values = global_conf_variables.get_values()
 
-    sql = db_manager.SQL(variables.user, variables.passwd, variables.host, variables.database)
+    sql = db_manager.SQL(values[3], values[4], values[5], values[6])
 
     # check if image existing in the db
     exists = sql.check_entry_exist(image_data[8])
