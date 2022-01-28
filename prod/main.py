@@ -11,10 +11,9 @@ import time
 from prod import image_detect, cv_image_processing, global_conf_variables
 from prod import VariableClass, ErrorHandlingClass, db_manager, config_parser
 from prod.utils import image_compare
-
-# controls the error message sent interval in seconds
 from prod.utils.image_compare import img_skip_messsage
 
+# controls the error message sent interval in seconds
 alarm_delay = 5
 
 
