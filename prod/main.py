@@ -13,6 +13,8 @@ from prod import VariableClass, ErrorHandlingClass, db_manager, config_parser
 from prod.utils import image_compare
 
 # controls the error message sent interval in seconds
+from prod.utils.image_compare import img_skip_messsage
+
 alarm_delay = 5
 
 
@@ -21,7 +23,7 @@ def img_processing_controller():
     cv_data_tup = cv_image_processing.cv_processing()
     cv_data = cv_data_tup[0] + cv_data_tup[1]
     image_data = (list(img_meta_data) + cv_data)
-    return image_data
+    return image_data, image_data[9]
 
 
 def db_manager_controller(dbfields, cv_data):
@@ -49,9 +51,13 @@ if __name__ == "__main__":
             image_compare.main()
             time.sleep(alarm_delay)
             image_detect.watchdog_run()
-            cv_img_data = img_processing_controller()
-            db_fields = config_parser.db_json_parser()
-            db_manager_controller(db_fields, cv_img_data)
+            cv_img_data, add_check = img_processing_controller()
+            if add_check is True:
+                db_fields = config_parser.db_json_parser()
+                db_manager_controller(db_fields, cv_img_data)
+            else:
+                img_skip_messsage()
+
         except Exception as e:
             ErrorHandlingClass.ErrorMessageHandler(e)
 

@@ -15,11 +15,10 @@ from tensorflow import keras
 import numpy as np
 import shutil
 
-from prod import VariableClass, global_conf_variables
+from prod import VariableClass, global_conf_variables, cv_image_processing
 from prod.config_parser import config_json_parser
 
 config = config_json_parser()
-
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -28,6 +27,11 @@ values = global_conf_variables.get_values()
 GELPhotos = values[0]  # image from GelPhotos folder
 file_type = values[1]
 filtered = values[2]  # image for processing CV
+
+
+def img_skip_messsage():
+    img_name = VariableClass.get_latest_image(GELPhotos, file_type)
+    print('Skipping image [{}], does not meet quality standards'.format(img_name[1]))
 
 
 def img_compare():
@@ -41,19 +45,19 @@ def img_compare():
     sunflower_path = VariableClass.get_latest_image(GELPhotos, file_type)
     img_name = sunflower_path[1]
 
-    img = tf.keras.utils.load_img(
-        img_name, target_size=(270, 480)
-    )
+    img = tf.keras.utils.load_img(img_name, target_size=(270, 480))
     img_array = tf.keras.utils.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create a batch
 
     predictions = model.predict(img_array)
     score = tf.nn.softmax(predictions[0])
     add_img_if = class_names[np.argmax(score)], 100 * np.max(score)
-    if add_img_if[0] == 'good_photos':
+
+    result = cv_image_processing.cv_processing()
+    if add_img_if[0] == 'good_photos' and result is True:
         shutil.copy('{}/{}'.format(GELPhotos, img_name), filtered)
     else:
-        print('Skipping image [{}], does not meet quality standards'.format(img_name))
+        pass
 
 
 def main():

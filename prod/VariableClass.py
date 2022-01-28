@@ -28,17 +28,17 @@ class ImageData:
 
       Variables:
           date_time_db[0]  - date/time image added to db
-          cam_dist_to_gate[17] - distance in mm from bottom of image (camera) to tailgate (reference obj xB,yB)
-          chain_dist_to_gate[16] - chain_dist_to_gate in pixels
-          tailgate_coord_x[37] - tailgate_coord_x in image
-          tailgate_coord_y[38] - tailgate_coord_y in image
-          distance_lead[16] - tailgate distance leading the pan
-          distance_lag[15] - tailgate distance_lag
-          file_size[2]  - image file_size (on disk)
           file_name[1]  - image name
+          file_size[2]  - image file_size (on disk)
           num_pixels[3]  - image number of pixels
           date_time_create[4]  - date/time image was created (take by camera)
-          image_id[5]  - id of image"""
+          image_id[5]  - id of image
+          distance_lag[6] - tailgate distance from chain_dist_to_gate in mm
+          chain_dist_to_gate[7] - chain_dist_to_gate in pixels
+          cam_dist_to_gate[8] - distance in mm from bottom of image (camera) to tailgate (reference obj xA,yA)
+          tailgate_coord_x[10] - tailgate_coord_x in image
+          tailgate_coord_y[11] - tailgate_coord_y in image
+          """
 
     def __init__(self, date_time_db, cam_dist_to_gate, chain_dist_to_gate, tailgate_coord_x, tailgate_coord_y,
                  distance_lead, distance_lag, file_size, file_name, num_pixels, date_time_create, image_id):
@@ -50,8 +50,8 @@ class ImageData:
 
 # formats variables before sending to db_manager.py
 def format_image_data(image_data):
-    var = (ImageData(image_data[0], image_data[17], image_data[16], image_data[37],
-                     image_data[38], image_data[16], image_data[15], image_data[2],
+    var = (ImageData(image_data[0], image_data[8], image_data[7], image_data[10],
+                     image_data[11], image_data[7], image_data[6], image_data[2],
                      image_data[1], image_data[3], image_data[4], image_data[5]))
 
     return var.date_time_db, var.cam_dist_to_gate, var.chain_dist_to_gate, var.tailgate_coord_x, var.tailgate_coord_y, \
