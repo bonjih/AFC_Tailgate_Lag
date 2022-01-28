@@ -14,6 +14,7 @@ from scipy.spatial import distance as dist
 import os
 
 from prod import VariableClass, ErrorHandlingClass, global_conf_variables
+from prod.utils.image_compare import img_skip_messsage
 
 try:
     values = global_conf_variables.get_values()
@@ -23,10 +24,9 @@ try:
     filtered = values[2]  # image for processing CV
     known_distance = values[7]
     known_width = values[8]
-
+    processed_img = values[9]  # saved processed image location
 except Exception as e:
     print(e)
-
 
 try:
     def load_image():
@@ -41,9 +41,8 @@ except Exception as e:
 
 
 def save_image(processed_file, img):
-    file_name = processed_file
-    path = './saved_processed_images/'
-    cv.imwrite(os.path.join(path, file_name), img)
+    os.chdir(processed_img)
+    cv.imwrite(processed_file, img)
 
 
 def create_mask(img):
@@ -62,9 +61,19 @@ def color_thresh_HSV(img):
     hsv_upper = np.array([0, 255, 255])
     mask = cv.inRange(hsv, hsv_lower, hsv_upper)
     result = cv.bitwise_and(original, original, mask=mask)
-    # cv.imshow("Image", result)
-    # cv.waitKey(0)
     return result
+
+
+def find_dist_less_than_xcentre(xA, yA, x_centre):
+    #  finds the distance from 0, yA to xA, yA), if < x_centre, don't process
+    #  cv.line(orig, (int(xA), int(yA)), (0, int(yA)), (255, 0, 255), 1)
+    file_name = VariableClass.get_latest_image(filtered, file_type)
+    dist_left_of_y_centre = (dist.euclidean((xA, yA), (0, yA)))
+
+    if dist_left_of_y_centre >= x_centre:
+        return True
+    else:
+        return False
 
 
 def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
@@ -73,40 +82,50 @@ def find_area(orig, x_centre, midpoint, xA, yA, color, refObj):
     base = (dist.euclidean((x_centre, x_centre), (x_centre, 0)))
 
     # find side a
-    cv.line(orig, (x_centre, x_centre), (int(xA), int(yA)), color, 2)
+    cv.line(orig, (x_centre, x_centre), (int(xA), int(yA)), (0, 0, 255), 1)
     side_a = (dist.euclidean((x_centre, x_centre), (xA, yA)))
     side_a_dist = (dist.euclidean((x_centre, x_centre), (xA, yA)) / refObj[2])
     (mX2, mY2) = midpoint((x_centre, x_centre), (xA, yA))
 
     # find side b
-    cv.line(orig, (x_centre, 0), (int(xA), int(yA)), color, 2)
+    # cv.line(orig, (x_centre, 0), (int(xA), int(yA)), (255, 0, 0), 1)
     side_b = (dist.euclidean((x_centre, 0), (xA, yA)))
 
     # find area of triangle
     s = (side_b + side_a + base) / 2
     area_of_triangle = (s * (s - side_b) * (s - side_a) * (s - base)) ** 0.5
     height_of_triangle = (area_of_triangle * 2) / base
+    cv.line(orig, (int(xA), int(yA)), (x_centre, int(yA)), (255, 0, 255), 1)
+    height_line = (dist.euclidean((xA, yA), (x_centre, yA)))
+    (mX1, mY1) = midpoint((xA, yA), (x_centre, yA))
+    # cv.putText(orig, "{:.1f}px".format(height_line), (int(mX1), int(mY1 - 10)),
+    #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
 
-    a = 150
-    b = 9
-    c = (height_of_triangle * a) / b
-
-    e = 150
-    f = 9
-    g = (side_a * e) / f
-
-    cv.putText(orig, "{:.1f}mm".format(g), (int(mX2), int(mY2 - 10)),
-               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+    result = find_dist_less_than_xcentre(xA, yA, x_centre)
 
     KNOWN_DISTANCE = known_distance
     KNOWN_WIDTH = known_width
     # RBB = cv.minAreaRect(c)
 
+    b = 9
+    height_in_mm = (height_of_triangle * KNOWN_WIDTH) / b
+
+    f = 9
+    dist_cam_to_gate = (side_a * KNOWN_WIDTH) / f
+
+    #  text for distance in mm side A
+    cv.putText(orig, "{:.1f}mm".format(dist_cam_to_gate), (int(mX2), int(mY2 - 10)),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
+    #  text for distance in mm height
+    cv.putText(orig, "{:.1f}mm".format(height_in_mm), (int(mX1), int(mY1 - 10)),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
     focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
     fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
-    # print(focal_length, fl_to_dist, 'ff', c)
+    # print(focal_length, fl_to_dist, 'ff', height_in_mm)
 
-    return side_a_dist, fl_to_dist, height_of_triangle, c, g
+    return side_a_dist, fl_to_dist, height_of_triangle, height_in_mm, dist_cam_to_gate, result
 
 
 def cv_processing():
@@ -117,11 +136,8 @@ def cv_processing():
     dists = []
     pix_coords = []
 
-    img_shape_x = img.shape[1]
-    img_shape_y = img.shape[0]
-
-    x_centre = round(img_shape_x / 2)
-    y_centre = round(img_shape_y / 2)
+    x_centre = round(img.shape[1] / 2)
+    y_centre = round(img.shape[0] / 2)
 
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     gray = cv.GaussianBlur(gray, (7, 7), 0)  # Gaussian filter with a 7 x 7 kernel
@@ -140,8 +156,9 @@ def cv_processing():
     # sort the contours from left-to-right and, then initialize the
     # distance colors and reference object
     (cnts, _) = contours.sort_contours(cnts)
-    colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0),
-              (255, 0, 255))
+    # colors = ((0, 0, 255), (240, 0, 159), (0, 165, 255), (255, 255, 0),
+    #           (255, 0, 255))
+    colors = (255, 0, 255)
 
     refObj = None
 
@@ -175,47 +192,74 @@ def cv_processing():
             continue
 
         orig = img.copy()
-        cv.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2)
-        cv.drawContours(orig, [refObj[0].astype("int")], -1, (0, 255, 0), 2)
+        cv.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 1)
+        cv.drawContours(orig, [refObj[0].astype("int")], -1, (0, 255, 0), 1)
 
         refCoords = np.vstack([refObj[0], refObj[1]])
         objCoords = np.vstack([box, (cX, cY)])
 
-        for ((xA, yA), (xB, yB), color) in zip(refCoords, objCoords, colors):
-            cv.circle(orig, (int(xA), int(yA)), 5, color, -1)
-            cv.circle(orig, (int(xB), int(yB)), 5, color, -1)
-            # cv.line(orig, (int(xA), int(yA)), (int(xB), int(yB)),
-            #         color, 2)
+        ((xA, yA), (xB, yB), color) = (refCoords[3], objCoords[3], colors)  # get 4th point in the BB, clockwise
+        cv.circle(orig, (int(xA), int(yA)), 1, color, -1)
 
-            # compute the Euclidean distance between the coordinates,
-            # and then convert the distance in pixels to distance in units
-            # d = (dist.euclidean((xA, yA), (xB, yB)) / refObj[2]) / 25.4
-            # (mX, mY) = midpoint((xA, yA), (xB, yB))
-            # cv.putText(orig, "{:.1f}mm".format(d), (int(mX), int(mY - 10)),
-            #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-            #
-            # str_coords = (str(xB) + " / " + str( yB))
-            # cv.putText(orig, str(str_coords), (int(xB), int(yB)), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
+        (side_a_dist, fl_to_dist, height_in_mm, dist_cam_to_gate, height_of_triangle, result) = find_area(orig,
+                                                                                                          x_centre,
+                                                                                                          midpoint, xA,
+                                                                                                          yA, color,
+                                                                                                          refObj)
 
-            # compute the Euclidean distance between x_centre and object (tailgate), by making triangles
-            # get height of triangle to base (x_centre)
-            # and then convert the distance in pixels to distance in units
+        # cv.imshow("Image", orig)
+        # cv.waitKey(0)
 
-            a = int(xA) - x_centre
+        dists.append(int(dist_cam_to_gate))  # distance from camera to object
+        dists.append(int(height_in_mm))  # distance in mm from chain to object
+        dists.append(int(height_of_triangle))
+        pix_coords.append(int(xA))
+        pix_coords.append(int(yA))
+        pix_coords.append(int(xB))
+        pix_coords.append(int(yB))
+        dists.append(bool(result))
 
-            (side_a_dist, fl_to_dist, c, g, height_of_triangle) = find_area(orig, x_centre, midpoint, xA, yA, color,
-                                                                            refObj)
-            #
-            # cv.imshow("Image", orig)
-            # cv.waitKey(0)
+        result = find_dist_less_than_xcentre(xA, yA, x_centre)
+        if result is True:
+            file_name = VariableClass.get_latest_image(filtered, file_type)
+            save_image(file_name[1], orig)
+        else:
+            pass
 
-            dists.append(int(g))  # distance from camera to object
-            dists.append(int(c))
-            dists.append(int(height_of_triangle))
-            pix_coords.append(int(xA))
-            pix_coords.append(int(yA))
-            pix_coords.append(int(xB))
-            pix_coords.append(int(yB))
-
-        # save_image(latest_file, orig)
         return dists, pix_coords
+
+        # for ((xA, yA), (xB, yB), color) in zip(refCoords, objCoords, colors):
+        #     # cv.circle(orig, (int(xA), int(yA)), 5, color, -1)
+        #     # cv.circle(orig, (int(xB), int(yB)), 5, color, -1)
+        #     # cv.line(orig, (int(xA), int(yA)), (int(xB), int(yB)), color, 2)
+        #
+        #     # compute the Euclidean distance between the coordinates,
+        #     # and then convert the distance in pixels to distance in units
+        #     # d = (dist.euclidean((xA, yA), (xB, yB)) / refObj[2]) / 25.4
+        #     # (mX, mY) = midpoint((xA, yA), (xB, yB))
+        #     # cv.putText(orig, "{:.1f}mm".format(d), (int(mX), int(mY - 10)),
+        #     #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+        #     #
+        #     # str_coords = (str(xB) + " / " + str( yB))
+        #     # cv.putText(orig, str(str_coords), (int(xB), int(yB)), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
+        #
+        #     # compute the Euclidean distance between x_centre and object (tailgate), by making triangles
+        #     # get height of triangle to base (x_centre)
+        #     # and then convert the distance in pixels to distance in units
+        #
+        #     a = int(xA) - x_centre
+        #
+        #     (side_a_dist, fl_to_dist, c, g, height_of_triangle) = find_area(orig, x_centre, midpoint, xA, yA, color,
+        #                                                                     refObj)
+        #
+        #     dists.append(int(g))  # distance from camera to object
+        #     dists.append(int(c))
+        #     dists.append(int(height_of_triangle))
+        #     pix_coords.append(int(xA))
+        #     pix_coords.append(int(yA))
+        #     pix_coords.append(int(xB))
+        #     pix_coords.append(int(yB))
+        #
+        # file_name = VariableClass.get_latest_image(filtered, file_type)
+        # save_image(file_name[1], orig)
+        # return dists, pix_coords
