@@ -81,6 +81,18 @@ def create_lines(img_orig, x_centre, xB, yB):
     cv.line(img_orig, (int(xB), int(yB)), (x_centre, int(yB)), (255, 0, 255), 1)
 
 
+def add_text_to_lines(orig, img_orig, dist_cam_to_gate, height_in_mm, color, height_of_triangle, mX2, mY2, mX1, mY1):
+    #  text for distance in mm side A
+    cv.putText(orig, "{:.1f}mm".format(dist_cam_to_gate), (int(mX2), int(mY2 - 10)),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
+    #  text for distance in mm height
+    cv.putText(orig, "{:.1f}mm".format(height_in_mm), (int(mX1), int(mY1 - 10)),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+    cv.putText(img_orig, "{:.1f}px".format(height_of_triangle), (int(mX1), int(mY1) - 10),
+               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
+
 def find_area(orig, x_centre, midpoint, xA, yA, xB, yB, color, refObj, img_orig):
     # find base
     create_lines(img_orig, x_centre, xB, yB)
@@ -102,8 +114,6 @@ def find_area(orig, x_centre, midpoint, xA, yA, xB, yB, color, refObj, img_orig)
     create_lines(img_orig, x_centre, xB, yB)
     # height_line = (dist.euclidean((xB, yB), (x_centre, yB)))
     (mX1, mY1) = midpoint((xB, yB), (x_centre, yB))
-    # cv.putText(orig, "{:.1f}px".format(height_line), (int(mX1), int(mY1 - 10)),
-    #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
 
     result = find_dist_less_than_xcentre(xB, yB, x_centre)
 
@@ -118,15 +128,7 @@ def find_area(orig, x_centre, midpoint, xA, yA, xB, yB, color, refObj, img_orig)
     f = 9
     dist_cam_to_gate = (side_a * KNOWN_WIDTH) / f
 
-    #  text for distance in mm side A
-    cv.putText(orig, "{:.1f}mm".format(dist_cam_to_gate), (int(mX2), int(mY2 - 10)),
-               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-
-    #  text for distance in mm height
-    cv.putText(orig, "{:.1f}mm".format(height_in_mm), (int(mX1), int(mY1 - 10)),
-               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-    cv.putText(img_orig, "{:.1f}px".format(height_of_triangle), (int(mX1), int(mY1) - 10),
-               cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+    add_text_to_lines(orig, img_orig, dist_cam_to_gate, height_in_mm, color, height_of_triangle, mX2, mY2, mX1, mY1)
 
     focal_length = (height_of_triangle * KNOWN_DISTANCE) / KNOWN_WIDTH
     fl_to_dist = (KNOWN_WIDTH * focal_length) / height_of_triangle
