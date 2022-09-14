@@ -94,7 +94,7 @@ def img_meta_data():
     result = file_path_check()
 
     if result is True:
-        path_to_img = pathlib.Path(filtered)  # change path to images in jconfig.json 'filtered'
+        path_to_img = pathlib.Path(filtered)  # change path to images in config.json 'filtered'
         # assert path_to_img.exists(), f'No such file: {path_to_img}'  # check that the file exists
 
         # date/time - when the  image is added to the database

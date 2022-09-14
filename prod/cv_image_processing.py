@@ -63,6 +63,17 @@ def color_thresh_HSV(img):
     return result
 
 
+def thresholding(img):
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray = cv.GaussianBlur(gray, (7, 7), 0)  # Gaussian filter with a 7 x 7 kernel
+    # perform edge detection, then perform a dilation + erosion to
+    # close gaps in between object edges
+    edged = cv.Canny(gray, 170, 170)
+    edged = cv.dilate(edged, None, iterations=1)
+    edged = cv.erode(edged, None, iterations=1)
+    return edged
+
+
 def find_dist_less_than_xcentre(xA, yA, x_centre):
     #  finds the distance from 0, yA to xA, yA), if < x_centre, don't process
     #  cv.line(orig, (int(xA), int(yA)), (0, int(yA)), (255, 0, 255), 1)
@@ -142,21 +153,13 @@ def cv_processing():
     img_orig = img.copy()
     img = create_mask(img)
     img = color_thresh_HSV(img)
+    edged = thresholding(img)
 
     dists = []
     pix_coords = []
 
     x_centre = round(img.shape[1] / 2)
     y_centre = round(img.shape[0] / 2)
-
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    gray = cv.GaussianBlur(gray, (7, 7), 0)  # Gaussian filter with a 7 x 7 kernel
-
-    # perform edge detection, then perform a dilation + erosion to
-    # close gaps in between object edges
-    edged = cv.Canny(gray, 170, 170)
-    edged = cv.dilate(edged, None, iterations=1)
-    edged = cv.erode(edged, None, iterations=1)
 
     # find contours in the edge map
     cnts = cv.findContours(edged.copy(), cv.RETR_EXTERNAL,
@@ -240,38 +243,3 @@ def cv_processing():
 
         return dists, pix_coords
 
-        # for ((xA, yA), (xB, yB), color) in zip(refCoords, objCoords, colors):
-        #     # cv.circle(orig, (int(xA), int(yA)), 5, color, -1)
-        #     # cv.circle(orig, (int(xB), int(yB)), 5, color, -1)
-        #     # cv.line(orig, (int(xA), int(yA)), (int(xB), int(yB)), color, 2)
-        #
-        #     # compute the Euclidean distance between the coordinates,
-        #     # and then convert the distance in pixels to distance in units
-        #     # d = (dist.euclidean((xA, yA), (xB, yB)) / refObj[2]) / 25.4
-        #     # (mX, mY) = midpoint((xA, yA), (xB, yB))
-        #     # cv.putText(orig, "{:.1f}mm".format(d), (int(mX), int(mY - 10)),
-        #     #            cv.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-        #     #
-        #     # str_coords = (str(xB) + " / " + str( yB))
-        #     # cv.putText(orig, str(str_coords), (int(xB), int(yB)), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-        #
-        #     # compute the Euclidean distance between x_centre and object (tailgate), by making triangles
-        #     # get height of triangle to base (x_centre)
-        #     # and then convert the distance in pixels to distance in units
-        #
-        #     a = int(xA) - x_centre
-        #
-        #     (side_a_dist, fl_to_dist, c, g, height_of_triangle) = find_area(orig, x_centre, midpoint, xA, yA, color,
-        #                                                                     refObj)
-        #
-        #     dists.append(int(g))  # distance from camera to object
-        #     dists.append(int(c))
-        #     dists.append(int(height_of_triangle))
-        #     pix_coords.append(int(xA))
-        #     pix_coords.append(int(yA))
-        #     pix_coords.append(int(xB))
-        #     pix_coords.append(int(yB))
-        #
-        # file_name = VariableClass.get_latest_image(filtered, file_type)
-        # save_image(file_name[1], orig)
-        # return dists, pix_coords

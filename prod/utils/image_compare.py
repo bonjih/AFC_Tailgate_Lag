@@ -6,7 +6,7 @@ __version__ = "1.0.0"
 __maintainer__ = ""
 __status__ = "Dev"
 
-# Compares images in folder //AISMORGTK01/GELPhotos with image where camera is at pan 0
+# Compares images in folder \\AISMORGTK01/GELPhotos with image where camera is at pan 0
 # puts all similar images in AISMORLAG01 c:\gate_end_lag\scripts\utils\filtered
 
 import os
@@ -21,7 +21,6 @@ from prod.config_parser import config_json_parser
 config = config_json_parser()
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 values = global_conf_variables.get_values()
 
 GELPhotos = values[0]  # image from GelPhotos folder
@@ -36,8 +35,8 @@ def img_skip_messsage():
 
 def img_compare():
     # loads the model from the file name and creates a list of class names
-    model = keras.models.load_model(r"C:\Users\ben.hamilton\PycharmProjects\Anglo\prod\utils\first_model.h5")
-    class_names = ['bad_photos', 'good_photos']
+    model = keras.models.load_model("/utils/first_model.h5")
+    class_names = ['bad_image', 'good_image']
 
     # takes the file path of the image being compared.
     # the script to find newly available photos and comparing them should most likely go here.
@@ -61,4 +60,4 @@ def img_compare():
 
 
 def main():
-    img_compare()
+     img_compare()
